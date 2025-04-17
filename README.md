@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     except Exception as e:
         print(f"Terjadi error: {str(e)}")
-```
+a
 Hasilnya:
 
 ![image](https://github.com/user-attachments/assets/da5e07e9-1e80-4b27-9182-aebbce4ffd9d)
@@ -151,28 +151,28 @@ Ditemukan outliers pada feature volume, berikut adalah bukti pembersihan outlier
 ![image](https://github.com/user-attachments/assets/5cd927d5-fd59-4ba1-b798-015ec657b3a6)
 
 - Visualisasi outliers menggunakan boxplot<br>
--- boxplot open price setelah outlier handling: <br>
+  -- boxplot open price setelah outlier handling: <br>
 
-![image](https://github.com/user-attachments/assets/8f91fa59-1b4c-443a-819d-2c1e7f206e5a)
+  ![image](https://github.com/user-attachments/assets/8f91fa59-1b4c-443a-819d-2c1e7f206e5a)
 
--- boxplot close price setelah outlier handling:<br>
+  -- boxplot close price setelah outlier handling:<br>
 
-![image](https://github.com/user-attachments/assets/c8cce334-8d9c-4526-996c-c5948091da5b)
+  ![image](https://github.com/user-attachments/assets/c8cce334-8d9c-4526-996c-c5948091da5b)
+  
 
-
--- boxplot high price setelah outlier handling:<br>
-
-![image](https://github.com/user-attachments/assets/6235c7ad-036b-458e-81a4-c821d6837e26)
-
-
--- boxplot low price setelah outlier handling:<br>
-
-![image](https://github.com/user-attachments/assets/7241e495-a3dc-4a87-b303-eaa6566c8398)
+  -- boxplot high price setelah outlier handling:<br>
+  
+  ![image](https://github.com/user-attachments/assets/6235c7ad-036b-458e-81a4-c821d6837e26)
 
 
--- boxplot volume price setelah outlier handling:<br>
+  -- boxplot low price setelah outlier handling:<br>
 
-![image](https://github.com/user-attachments/assets/40fe2ff4-25ef-4052-8b1e-492e4a4231e1)
+  ![image](https://github.com/user-attachments/assets/7241e495-a3dc-4a87-b303-eaa6566c8398)
+
+
+  -- boxplot volume price setelah outlier handling:<br>
+
+  ![image](https://github.com/user-attachments/assets/40fe2ff4-25ef-4052-8b1e-492e4a4231e1)
 
 
 #### c. Univariate Analysis
@@ -229,23 +229,240 @@ Hal yang perlu diperhatikan: Biasanya dilakukan proses PCA(Principal Component A
 ## E. **Modeling**
 
 ### 1. Long-Short Term Memory (LSTM)
+Algoritma LSTM digunakan karena kemampuannya dalam mengatasi vanishing & Loss Gradient, adapun kekurangan dan kelebihan dari Algoritma LSTM:
+- Kekurangan:<br>
+  -- Membutuhkan waktu pelatihan lebih lama dibanding GRU atau CNN karena kompleksitas strukturnya.<br>
+  -- Jumlah unit LSTM, learning rate, dan ukuran window harus di-tune dengan hati-hati.<br>
 
+- Kelebihan:<br>
+  -- Forget gate membantu menghindari noise dalam data saham yang fluktuatif.<br>
+  -- Dirancang khusus untuk data deret waktu, sehingga cocok untuk prediksi harga saham.<br>
+
+#### a. Transformasi Data
+Data dibuat untuk disesuaikan dengan model, sebagai berikut:
+```python
+import numpy as np
+
+# konversikan array nilai menjadi matriks kumpulan data
+def create_dataset(dataset, time_step=1):
+    dataX, dataY = [], []
+    for i in range(len(dataset)-time_step-1):
+        a = dataset['Close'][i:(i+time_step)].values
+        dataX.append(a)
+        # Use iloc to access data by position
+        dataY.append(dataset['Close'].iloc[i + time_step])
+    return np.array(dataX), np.array(dataY)
+```
+```python
+time_step = 10
+X_train_lstm, y_train_lstm = create_dataset(train_data_scaled, time_step)
+X_test_lstm, y_test_lstm = create_dataset(test_data_scaled, time_step)
+
+print("X_train: ", X_train_lstm.shape)
+print("y_train: ", y_train_lstm.shape)
+print("X_test: ", X_test_lstm.shape)
+print("y_test", y_test_lstm.shape)
+```
+![image](https://github.com/user-attachments/assets/ac826e33-31de-40b2-9074-3a34dccf58ad)
+
+```python
+# membentuk ulang input menjadi [samples, time steps, features] yang diperlukan untuk LSTM
+X_train_lstm = X_train_lstm.reshape(X_train_lstm.shape[0],X_train_lstm.shape[1] , 1)
+X_test_lstm = X_test_lstm.reshape(X_test_lstm.shape[0],X_test_lstm.shape[1] , 1)
+
+print("X_train: ", X_train_lstm.shape)
+print("X_test: ", X_test_lstm.shape)
+```
+![image](https://github.com/user-attachments/assets/c1dd285b-be95-458b-8324-58dc75e116d1)
+
+#### b. Bentuk Model
+```python
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+#menentukan model, neuron, loss, dan optimizer
+model_lstm =Sequential()
+model_lstm.add(LSTM(100,input_shape=(None,1),activation="relu"))
+model_lstm.add(Dense(1))
+model_lstm.compile(loss="mean_squared_error",optimizer="adam")
+```
+```python
+history_lstm = model_lstm.fit(X_train_lstm,y_train_lstm,validation_data=(X_test_lstm,y_test_lstm),epochs=128,batch_size=16,verbose=1)
+```
+#### c. Hyperparameter Tuning
+Berikut adalah Hyperparameter yang di atur sedemikian rupa agar model mendapatkan hasil terbaiknya:<br>
+- Neuron: `100`
+- Activation: `relu`
+- Optimizer: `Adam`  
+- Loss: `MSE`
+- Model: `Sequential`  
+- Epochs: `128`  
+- Batch Size: `16`
+
+#### D. Plotting Loss dan Validasi Loss
+![image](https://github.com/user-attachments/assets/f539ac1a-88e2-4960-9a22-a2a16b6f19f6)
+
+#### E. Kesimpulan
+Berdasarkan Plotting Loss & Val_loss dapat diketahui bahwa algoritma LSTM mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
+
+Jika sudah maka data dapat diubah kembali ke bentuk awal menggunakan proses denormalisasi dengan inverse Min-Max Scaler.
 
 ### 2. Convolutional Neural Network (CNN)
+Algoritma CNN digunakan karena kecepatan komputasinya, adapun kekurangan dan kelebihan dari Algoritma CNN:
+- Kekurangan:<br>
+  -- CNN tidak memiliki memori internal karena butuh window-based approach untuk menghubungkan waktu.<br>
+  -- Ukuran kernel harus disesuaikan dengan pola data.<br>
+  
+- Kelebihan:<br>
+  -- Komputasinya cepat karena paralelisasi lebih baik dibanding RNN (LSTM & GRU : Turunan RNN).<br>
+  -- Arsitektur fleksibel sehingga dapat dikombinasikan dengan pooling layers untuk ekstraksi fitur hierarkis.<br>
+  
+#### a. Transformasi Data
+```python
+# Create the dataset for CNN
+def create_dataset_cnn(dataset, time_step=1):
+    dataX, dataY = [], []
+    for i in range(len(dataset) - time_step - 1):
+        a = dataset['Close'][i:(i + time_step)].values
+        dataX.append(a)
+        dataY.append(dataset['Close'].iloc[i + time_step])
+    return np.array(dataX), np.array(dataY)
+
+time_step = 10
+X_train_cnn, y_train_cnn = create_dataset_cnn(train_data_scaled, time_step)
+X_test_cnn, y_test_cnn = create_dataset_cnn(test_data_scaled, time_step)
+
+# Reshape the input data for CNN (samples, time steps, features)
+X_train_cnn = X_train_cnn.reshape(X_train_cnn.shape[0], X_train_cnn.shape[1], 1)
+X_test_cnn = X_test_cnn.reshape(X_test_cnn.shape[0], X_test_cnn.shape[1], 1)
+```
+#### b. Bentuk Model
+```python
+# Define the CNN model
+model_cnn = Sequential()
+model_cnn.add(Conv1D(filters=64, kernel_size=3, activation='relu', input_shape=(X_train_cnn.shape[1], 1)))
+model_cnn.add(MaxPooling1D(pool_size=2))
+model_cnn.add(Flatten())
+model_cnn.add(Dense(50, activation='relu'))
+model_cnn.add(Dense(1))  # Output layer for regression
+model_cnn.compile(optimizer='adam', loss='mse')
+model_cnn.summary()
+```
+```python
+# Train the model
+history_cnn = model_cnn.fit(X_train_cnn, y_train_cnn, epochs=128, batch_size=32, validation_data=(X_test_cnn, y_test_cnn), verbose=1)
+```
+#### c. Hyperparameter Tuning
+Berikut adalah Hyperparameter yang di atur sedemikian rupa agar model mendapatkan hasil terbaiknya:<br>
+- Layer: `64`
+- MaxPool: `2`
+- Neuron: `50`
+- Activation: `relu`
+- Optimizer: `Adam`  
+- Loss: `MSE`
+- Model: `Sequential`  
+- Epochs: `128`  
+- Batch Size: `32`
+
+#### D. Plotting Loss dan Validasi Loss
+![image](https://github.com/user-attachments/assets/d19a68b3-6f43-43ec-81aa-45060ca39064)
+
+#### E. Kesimpulan
+Berdasarkan Plotting Loss & Val_loss dapat diketahui bahwa algoritma CNN mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
+
+Jika sudah maka data dapat diubah kembali ke bentuk awal menggunakan proses denormalisasi dengan inverse Min-Max Scaler.
 
 ### 3. Gated Recurrent Unit (GRU)
+Algoritma GRU digunakan karena strukturnya lebih sederhana daripada LSTM namun performanya dapat sebanding dengan LSTM, adapun kekurangan dan kelebihan dari Algoritma GRU:
+- Kekurangan:<br>
+  -- Kurang optimal untuk menangkap tren jangka panjang karena keterbatasan Memori Jangka Panjang.<br>
+  -- **Dokumentasi dan studi kasus lebih sedikit dibanding LSTM**.<br>
 
+- Kelebihan:<br>
+  -- Efisiensi Komputasi: Struktur lebih sederhana (2 gate vs 3 gate pada LSTM) sehingga pelatihan lebih cepat.<br>
+  -- Kinerja pada Data Kecil: Lebih robust terhadap overfitting pada dataset terbatas.<br>
+  -- Menangnai Pola Jangka Pendek: Efektif untuk prediksi harian/mingguan dengan fluktuasi cepat.<br>
+
+#### a. Transformasi Data
+```python
+# Create the dataset for GRU
+def create_dataset_gru(dataset, time_step=1):
+    dataX, dataY = [], []
+    for i in range(len(dataset) - time_step - 1):
+        a = dataset['Close'][i:(i + time_step)].values
+        dataX.append(a)
+        dataY.append(dataset['Close'].iloc[i + time_step])
+    return np.array(dataX), np.array(dataY)
+
+time_step = 10
+X_train_gru, y_train_gru = create_dataset_gru(train_data_scaled, time_step)
+X_test_gru, y_test_gru = create_dataset_gru(test_data_scaled, time_step)
+
+# Reshape the input data for GRU (samples, time steps, features)
+X_train_gru = X_train_gru.reshape(X_train_gru.shape[0],X_train_gru.shape[1] , 1)
+X_test_gru = X_test_gru.reshape(X_test_gru.shape[0],X_test_gru.shape[1] , 1)
+```
+
+#### b. Bentuk Model
+```python
+# Define the GRU model
+model_gru = Sequential()
+model_gru.add(GRU(100, input_shape=(X_train_gru.shape[1], 1), activation='relu')) # Adjust units as needed
+model_gru.add(Dense(1))
+model_gru.compile(optimizer='adam', loss='mse')
+
+# Train the GRU model
+history_gru = model_gru.fit(X_train_gru, y_train_gru, epochs=128, batch_size=8, validation_data=(X_test_gru,y_test_gru), verbose=1)
+```
+#### c. Hyperparameter Tuning
+- Neuron: `100`
+- Activation: `relu`
+- Optimizer: `Adam`  
+- Loss: `MSE`
+- Model: `Sequential`  
+- Epochs: `128`  
+- Batch Size: `8`
+
+#### D. Plotting Loss dan Validasi Loss
+![image](https://github.com/user-attachments/assets/19ea581b-3702-49f1-bfe9-6df9568726ea)
+
+
+#### E. Kesimpulan
+Berdasarkan Plotting Loss & Val_loss dapat diketahui bahwa algoritma GRU mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
+
+Jika sudah maka data dapat diubah kembali ke bentuk awal menggunakan proses denormalisasi dengan inverse Min-Max Scaler.
 
 ## F. **Evaluation**
-Pada bagian ini anda perlu menyebutkan metrik evaluasi yang digunakan. Lalu anda perlu menjelaskan hasil proyek berdasarkan metrik evaluasi yang digunakan.
+Matriks Evaluasi yang digunakan pada proyek ini diantaranya ada MSE, RMSE, MAE, MAPE, & R2. berikut adalah penjelasan dari setiap matriks evaluasi yang digunakan:<br>
+### 1. MSE
+MSE mengukur rata-rata kuadrat selisih antara nilai prediksi dan nilai aktual. Semakin tinggi nilai MSE maka semakin jauh prediksi model dari nilai aktual, yang berarti akurasi model menurun. Rumusnya: <br>
+![image](https://github.com/user-attachments/assets/91a25ade-c763-49da-a7d4-9c7209d6031d)
 
-Sebagai contoh, Anda memiih kasus klasifikasi dan menggunakan metrik **akurasi, precision, recall, dan F1 score**. Jelaskan mengenai beberapa hal berikut:
-- Penjelasan mengenai metrik yang digunakan
-- Menjelaskan hasil proyek berdasarkan metrik evaluasi
 
-Ingatlah, metrik evaluasi yang digunakan harus sesuai dengan konteks data, problem statement, dan solusi yang diinginkan.
+### 2. RMSE
+Root Mean Square Error atau disingkat RMSE merupakan hasil dari penjumlahan kuadrat error(Mean Square Error), perbedaan antar nilai asli dengan nilai prediksi akan dibagi dengan hasil penjumlahan yang akan diperoleh dari waktu peramalan. Semakin nilai RMSE mendekati nol, maka semakin baik kualitas hasil prediksi data tersebut, RMSE dirumuskan dengan: <br>
+![image](https://github.com/user-attachments/assets/c3f737ab-a417-4237-876f-edea798322ba)
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menjelaskan formula metrik dan bagaimana metrik tersebut bekerja.
+
+### 3. MAE
+MAE mengukur rata-rata absolut selisih antara nilai prediksi dan nilai aktual. Nilai MAE yang tinggi menunjukkan adanya deviasi absolut yang besar, sehingga akurasi model menurun. Rumusnya: <br>
+![image](https://github.com/user-attachments/assets/99cf2692-fb9e-4002-9460-6932a664c296)
+
+
+### 4. MAPE
+MAPE mengukur persentase kesalahan relatif terhadap nilai aktual. MAPE bernilai non‑negatif dan nilai terbaik adalah 0.0%, Semakin tinggi nilai MAPE, semakin besar persentase deviasi, yang berarti model kurang akurat. Rumusnya: <br>
+![image](https://github.com/user-attachments/assets/eb27413c-9453-43e4-bf50-c80ee8062e1e)
+
+
+### 5. R2
+R-squared(R2) memiliki arti koefisien determinasi, merupakan ukuran uji statistik yang digunakan untuk menilai sejauh mana variabel yang tidak bergantung dalam model tersebut dapat menguraikan varian pada variabel independen. Nilai dari koefisien determinasi berada pada angka antara 0 dan 1, dimana jika nilai menunjukkan angka 1 atau semakin mendekati angka 1 maka hasil prediksi tersebut sepenuhnya cocok dengan data yang ada. Rumusnya: <br>
+![image](https://github.com/user-attachments/assets/ac8e92a6-17f9-41ca-b2d5-ed0ff360e288)
+
+Setelah mengetahui penjelasan dari masing-masing Matriks Evaluasi, selanjutnya adalah hasil evaluasi dari masing-masing model:<br>
+### 1. LSTM
+### 2. CNN
+### 3. GRU
+
+**KESIMPULAN**:
+
 
 ## G. **Implementasi**
