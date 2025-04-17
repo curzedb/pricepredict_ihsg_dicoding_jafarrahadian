@@ -299,8 +299,7 @@ Berikut adalah Hyperparameter yang di atur sedemikian rupa agar model mendapatka
 - Batch Size: `16`
 
 #### D. Plotting Loss dan Validasi Loss
-![image](https://github.com/user-attachments/assets/efc98012-04d6-476d-beaf-0dfd40b7d386)
-
+![image](https://github.com/user-attachments/assets/5c4deea0-a00e-4bc2-9998-10a118d8e0ca)
 
 #### E. Kesimpulan
 Berdasarkan Plotting Loss & Val_loss dapat diketahui bahwa algoritma LSTM mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
@@ -365,8 +364,7 @@ Berikut adalah Hyperparameter yang di atur sedemikian rupa agar model mendapatka
 - Batch Size: `32`
 
 #### D. Plotting Loss dan Validasi Loss
-![image](https://github.com/user-attachments/assets/781db13b-09a2-4dae-9495-1a4320287108)
-
+![image](https://github.com/user-attachments/assets/4631d6a0-5fbf-4eb3-a69b-77dcfc3d52ae)
 
 #### E. Kesimpulan
 Berdasarkan Plotting Loss & Val_loss dapat diketahui bahwa algoritma CNN mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
@@ -425,8 +423,7 @@ history_gru = model_gru.fit(X_train_gru, y_train_gru, epochs=128, batch_size=16,
 - Batch Size: `16`
 
 #### D. Plotting Loss dan Validasi Loss
-![image](https://github.com/user-attachments/assets/1b5dee9e-0dd7-4fba-a7c9-fb0c7b5f268a)
-
+![image](https://github.com/user-attachments/assets/8b9e90c8-4c0c-47b8-a4b8-7baabf81ad86)
 
 #### E. Kesimpulan
 Berdasarkan Plotting Loss & Val_loss dapat diketahui bahwa algoritma GRU mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
@@ -457,16 +454,16 @@ R-squared(R2) memiliki arti koefisien determinasi, merupakan ukuran uji statisti
 
 Setelah mengetahui penjelasan dari masing-masing Matriks Evaluasi, selanjutnya adalah hasil evaluasi dari masing-masing model:<br>
 ### 1. LSTM
-![image](https://github.com/user-attachments/assets/c16ca91f-630f-4286-8839-4a577a8661ce)
+![image](https://github.com/user-attachments/assets/b6211bfe-ce8d-4d0a-8973-ef8205fd10dc)
 
 ### 2. CNN
-![image](https://github.com/user-attachments/assets/8a06252c-9955-4106-9c03-c339d02696a4)
+![image](https://github.com/user-attachments/assets/691f1e69-7611-43f6-a68c-6238f875c490)
 
 ### 3. GRU
-![image](https://github.com/user-attachments/assets/3ffb113c-988d-466c-aa4c-5b3057d0e77b)
+![image](https://github.com/user-attachments/assets/821347b1-aae9-4784-9f02-678bceeedfc0)
 
 **KESIMPULAN**:
-![image](https://github.com/user-attachments/assets/696ef75e-2b58-434c-9988-a90836313cc2)
+![image](https://github.com/user-attachments/assets/88985af1-cd6a-470f-bba4-49e44cc8d374)
 
 Berdasarkan pada matriks evaluasi pada gambar tabel diatas, model yang menunjukkan performa terbaik untuk analisis Time Series studi kasus Univariate feature adalah LSTM dengan skor tipis dari GRU.<br>
 
@@ -480,4 +477,5 @@ Berdasarkan pada matriks evaluasi pada gambar tabel diatas, model yang menunjukk
 ![beforeafterihsg](https://github.com/user-attachments/assets/79844f41-43ee-49f0-a97d-2659551a11ba)
 
 ### 3. Contoh penggunaan untuk prediksi 7 hari kedepan
-![image](https://github.com/user-attachments/assets/41fe83fc-c195-43de-b0d8-9727323a7855)
+![image](https://github.com/user-attachments/assets/7536eb61-a926-4b8b-93cb-dcae1e4777c8)
+
