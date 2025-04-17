@@ -299,7 +299,8 @@ Berikut adalah Hyperparameter yang di atur sedemikian rupa agar model mendapatka
 - Batch Size: `16`
 
 #### D. Plotting Loss dan Validasi Loss
-![image](https://github.com/user-attachments/assets/f539ac1a-88e2-4960-9a22-a2a16b6f19f6)
+![image](https://github.com/user-attachments/assets/efc98012-04d6-476d-beaf-0dfd40b7d386)
+
 
 #### E. Kesimpulan
 Berdasarkan Plotting Loss & Val_loss dapat diketahui bahwa algoritma LSTM mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
@@ -364,7 +365,8 @@ Berikut adalah Hyperparameter yang di atur sedemikian rupa agar model mendapatka
 - Batch Size: `32`
 
 #### D. Plotting Loss dan Validasi Loss
-![image](https://github.com/user-attachments/assets/d19a68b3-6f43-43ec-81aa-45060ca39064)
+![image](https://github.com/user-attachments/assets/781db13b-09a2-4dae-9495-1a4320287108)
+
 
 #### E. Kesimpulan
 Berdasarkan Plotting Loss & Val_loss dapat diketahui bahwa algoritma CNN mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
@@ -411,7 +413,7 @@ model_gru.add(Dense(1))
 model_gru.compile(optimizer='adam', loss='mse')
 
 # Train the GRU model
-history_gru = model_gru.fit(X_train_gru, y_train_gru, epochs=128, batch_size=8, validation_data=(X_test_gru,y_test_gru), verbose=1)
+history_gru = model_gru.fit(X_train_gru, y_train_gru, epochs=128, batch_size=16, validation_data=(X_test_gru,y_test_gru), verbose=1)
 ```
 #### c. Hyperparameter Tuning
 - Neuron: `100`
@@ -420,10 +422,10 @@ history_gru = model_gru.fit(X_train_gru, y_train_gru, epochs=128, batch_size=8, 
 - Loss: `MSE`
 - Model: `Sequential`  
 - Epochs: `128`  
-- Batch Size: `8`
+- Batch Size: `16`
 
 #### D. Plotting Loss dan Validasi Loss
-![image](https://github.com/user-attachments/assets/19ea581b-3702-49f1-bfe9-6df9568726ea)
+![image](https://github.com/user-attachments/assets/1b5dee9e-0dd7-4fba-a7c9-fb0c7b5f268a)
 
 
 #### E. Kesimpulan
@@ -437,21 +439,17 @@ Matriks Evaluasi yang digunakan pada proyek ini diantaranya ada MSE, RMSE, MAE, 
 MSE mengukur rata-rata kuadrat selisih antara nilai prediksi dan nilai aktual. Semakin tinggi nilai MSE maka semakin jauh prediksi model dari nilai aktual, yang berarti akurasi model menurun. Rumusnya: <br>
 ![image](https://github.com/user-attachments/assets/91a25ade-c763-49da-a7d4-9c7209d6031d)
 
-
 ### 2. RMSE
 Root Mean Square Error atau disingkat RMSE merupakan hasil dari penjumlahan kuadrat error(Mean Square Error), perbedaan antar nilai asli dengan nilai prediksi akan dibagi dengan hasil penjumlahan yang akan diperoleh dari waktu peramalan. Semakin nilai RMSE mendekati nol, maka semakin baik kualitas hasil prediksi data tersebut, RMSE dirumuskan dengan: <br>
 ![image](https://github.com/user-attachments/assets/c3f737ab-a417-4237-876f-edea798322ba)
-
 
 ### 3. MAE
 MAE mengukur rata-rata absolut selisih antara nilai prediksi dan nilai aktual. Nilai MAE yang tinggi menunjukkan adanya deviasi absolut yang besar, sehingga akurasi model menurun. Rumusnya: <br>
 ![image](https://github.com/user-attachments/assets/99cf2692-fb9e-4002-9460-6932a664c296)
 
-
 ### 4. MAPE
 MAPE mengukur persentase kesalahan relatif terhadap nilai aktual. MAPE bernilai non‑negatif dan nilai terbaik adalah 0.0%, Semakin tinggi nilai MAPE, semakin besar persentase deviasi, yang berarti model kurang akurat. Rumusnya: <br>
 ![image](https://github.com/user-attachments/assets/eb27413c-9453-43e4-bf50-c80ee8062e1e)
-
 
 ### 5. R2
 R-squared(R2) memiliki arti koefisien determinasi, merupakan ukuran uji statistik yang digunakan untuk menilai sejauh mana variabel yang tidak bergantung dalam model tersebut dapat menguraikan varian pada variabel independen. Nilai dari koefisien determinasi berada pada angka antara 0 dan 1, dimana jika nilai menunjukkan angka 1 atau semakin mendekati angka 1 maka hasil prediksi tersebut sepenuhnya cocok dengan data yang ada. Rumusnya: <br>
@@ -459,10 +457,27 @@ R-squared(R2) memiliki arti koefisien determinasi, merupakan ukuran uji statisti
 
 Setelah mengetahui penjelasan dari masing-masing Matriks Evaluasi, selanjutnya adalah hasil evaluasi dari masing-masing model:<br>
 ### 1. LSTM
+![image](https://github.com/user-attachments/assets/c16ca91f-630f-4286-8839-4a577a8661ce)
+
 ### 2. CNN
+![image](https://github.com/user-attachments/assets/8a06252c-9955-4106-9c03-c339d02696a4)
+
 ### 3. GRU
+![image](https://github.com/user-attachments/assets/3ffb113c-988d-466c-aa4c-5b3057d0e77b)
 
 **KESIMPULAN**:
+![image](https://github.com/user-attachments/assets/696ef75e-2b58-434c-9988-a90836313cc2)
 
+Berdasarkan pada matriks evaluasi pada gambar tabel diatas, model yang menunjukkan performa terbaik untuk analisis Time Series studi kasus Univariate feature adalah LSTM dengan skor tipis dari GRU.<br>
+
+**MAKA DARI ITU MODEL YANG AKAN DIPILIH ADALAH LSTM KARENA MEMILIKI PERFORMA TERBAIK BERDASARKAN HASIL MATRIKS EVALUASI PADA GAMBAR TABEL DIATAS**
 
 ## G. **Implementasi**
+### 1. Simpan model ke tf.lite
+![image](https://github.com/user-attachments/assets/19018356-aecb-4f2f-828c-cccc7d14cc2a)
+
+### 2. Data Sebelum dan Sesudah Prediksi
+![beforeafterihsg](https://github.com/user-attachments/assets/79844f41-43ee-49f0-a97d-2659551a11ba)
+
+### 3. Contoh penggunaan untuk prediksi 7 hari kedepan
+![image](https://github.com/user-attachments/assets/41fe83fc-c195-43de-b0d8-9727323a7855)
