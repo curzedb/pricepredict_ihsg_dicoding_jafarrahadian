@@ -12,8 +12,8 @@ Proyek Predictive Analytics: Prediksi Harga IHSG (^JKSE)
 Mengikuti Metode CRISP-DM 6 Fase
 
 Problem Steatment:
-- Volatilitas IHSG (^JKSE) yang tinggi membutuhkan perbandingan akurasi dengan model lain.
-- Belum banyak yang membahas studi komparatif yang fokus pada penerapan model deep learning seperti LSTM, CNN, dan GRU secara individual untuk memprediksi harga penutupan IHSG.
+- IHSG (^JKSE) memiliki tingkat volatilitas yang tinggi, sehingga menyulitkan investor dan analis dalam memprediksi harga penutupan secara akurat, yang berdampak pada pengambilan keputusan investasi.
+- Masih minim penelitian yang secara khusus mengeksplorasi dan membandingkan efektivitas berbagai pendekatan deep learning dalam menangani permasalahan prediksi harga penutupan IHSG. Terkhusus pada penerapan model deep learning seperti LSTM, CNN, dan GRU secara individual untuk memprediksi harga penutupan IHSG.
 
 Goals:
 - Menghasilkan model prediksi IHSG yang mampu mengurangi nilai error (MSE, RMSE MAE, MAPE, dan R2) dengan membandingkan model LSTM, CNN, dan GRU secara individual.
@@ -23,23 +23,35 @@ Solution statements:
 - Mengimplementasikan dan melatih tiga model deep learning secara terpisah: LSTM, CNN, dan GRU menggunakan dataset historis harga penutupan IHSG (^JKSE).
 - Mengukur performa setiap model menggunakan metrik kuantitatif yang objektif seperti Mean Squared Error (MSE), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), Mean absolute percentage error (MAPE), dan R-Squared (R2).
 
-Tambahan - Hardware:
-- Processor: Ryzen 7 5700X
-- Ram: 32GB DDR4
-- GPU: RTX 3060 12GB GDDR6
-
-Tambahan - Software:
-- OS: Windows 11 Home 64bit
-- Notebook: Google Colab (CPU)
-- Docker untuk Local Runtime GPU
-- Untuk instalasi API, Framework, ataupun Library dapat dilakukan melalui file requirements.txt
+Untuk instalasi API, Framework, ataupun Library dapat dilakukan melalui file requirements.txt
 
 ## 1. Instalasi Library yang dibutuhkan
+
+Perintah !pip install yfinance==0.2.54 adalah perintah untuk menginstal library yfinance dengan versi spesifik (0.2.54) menggunakan package manager pip dalam lingkup Python, perintah ini biasanya dijalankan di notebook seperti Jupyter Notebook atau Google Colab. dipilihnya versi 0.25.4 karena di versi itu data bisa di scrapping tanpa error
 """
 
 !pip install yfinance==0.2.54
 
-"""## 2. Import Library yang akan digunakan"""
+"""## 2. Import Library yang akan digunakan
+
+Berikut adalah penjelasan mengenai library yang digunakan pada baris kode dibawah:
+
+- yfinance: Library untuk mengunduh data pasar saham dari Yahoo Finance.
+
+- pandas: Library untuk manipulasi dan analisis data tabular.
+
+- time: Library bawaan Python untuk operasi terkait waktu sistem.
+
+- datetime: Library untuk manipulasi tanggal dan waktu.
+
+- csv: Library untuk membaca dan menulis file CSV.
+
+- os: Library untuk berinteraksi dengan sistem operasi.
+
+- matplotlib: Library untuk membuat visualisasi data dasar.
+
+- seaborn: Library visualisasi data statistik yang lebih estetis.
+"""
 
 import yfinance as yf
 import pandas as pd
@@ -53,6 +65,14 @@ import seaborn as sns
 """# B. Data Understanding
 
 ## 1. Mengambil data historis maksimal dari Yahoo Finance (Data Loading)
+
+Kode berikut berfungsi untuk mengambil seluruh data historis indeks IHSG (Indeks Harga Saham Gabungan) dari Yahoo Finance sejak pertama kali tercatat hingga hari ini. Fungsi utama bernama fetch_jkse_historical() menggunakan library yfinance untuk mengakses data IHSG dengan kode ticker "^JKSE".
+
+Dalam fungsi tersebut, data diambil dengan periode maksimum yang tersedia menggunakan method history(), kemudian diolah dengan mereset index DataFrame dan mengubah nama kolom 'Date' menjadi 'date' untuk konsistensi. Tanggal juga dikonversi dari format datetime menjadi string dengan format tahun-bulan-hari agar lebih mudah dibaca.
+
+Pada bagian eksekusi utama (main block), kode mencoba menjalankan fungsi pengambilan data dan menyimpan hasilnya ke file CSV bernama "jkse_historical.csv" tanpa menyertakan index. Jika proses berhasil, akan ditampilkan pesan sukses beserta jumlah baris data yang diperoleh. Jika terjadi error selama proses, pesan error akan ditampilkan untuk membantu troubleshooting.
+
+Kode ini bersifat standalone dan dapat dijalankan langsung sebagai script karena menggunakan pengecekan if __name__ == "__main__", yang memastikan bagian main hanya dieksekusi ketika file di-run langsung, bukan ketika diimpor sebagai module. Output utama dari kode ini adalah file CSV yang berisi seluruh data historis IHSG yang tersedia di Yahoo Finance.
 """
 
 def fetch_jkse_historical():
@@ -92,25 +112,60 @@ Memuat dataset dari directory /Data :
 
 maindf=pd.read_csv('/content/jkse_historical.csv')
 
-"""Menampilkan 5 data terbaru dan Terlama :"""
+"""Perintah maindf = pd.read_csv('/content/jkse_historical.csv') menggunakan library pandas (yang diimpor sebagai pd) untuk membaca data dari file CSV yang berlokasi di path /content/jkse_historical.csv dan menyimpannya ke dalam variabel maindf sebagai DataFrame pandas.
+
+Menampilkan 5 data terbaru dan Terlama :
+"""
 
 maindf
 
-"""Menampilkan jumlah data dan feature pada dataset:"""
+"""maindf adalah sebuah DataFrame pandas yang berisi data historis IHSG (Indeks Harga Saham Gabungan) yang telah di-load dari file CSV (jkse_historical.csv), mencakup kolom-kolom seperti tanggal, harga (Open/High/Low/Close), dan volume perdagangan. Data yang ditampilkan adalah 5 data terbaru dan 5 data terlama
+
+Menampilkan jumlah data dan feature pada dataset:
+"""
 
 maindf.shape
 
-"""Menampilkan informasi mengenai tipe data pada dataset:"""
+"""maindf.shape adalah perintah dalam pandas yang menampilkan dimensi (jumlah baris dan kolom) dari DataFrame maindf dalam bentuk tuple (baris, kolom). Dalam kode diatas dataset berarti berisi 8534 data dengan 6 feature
+
+Menampilkan informasi mengenai tipe data pada dataset:
+"""
 
 maindf.info()
 
-"""Menampilkan informasi mengenai Statistik Deskriptif data pada dataset:"""
+"""Perintah maindf.info() dalam pandas digunakan untuk menampilkan ringkasan informasi tentang struktur dan kandungan DataFrame maindf, termasuk jumlah total entri (baris), daftar kolom beserta jumlah nilai non-null (tidak adal null) yang terkandung di dalamnya, tipe data masing-masing kolom (seperti float64 untuk numerik desimal, int64 untuk numerik bulat, atau object untuk teks/tanggal), serta estimasi penggunaan memori. Output ini membantu secara cepat mengevaluasi kualitas data - seperti mendeteksi missing values jika jumlah non-null tidak sesuai dengan total entri, memverifikasi kesesuaian tipe data, dan mengoptimalkan alokasi memori sebelum melakukan analisis lebih lanjut. Misalnya, untuk data IHSG, kita dapat memastikan kolom tanggal (date) bertipe object (string) atau sudah dikonversi ke datetime, serta mengecek konsistensi data harga (Open/High/Low/Close) dan volume perdagangan.
+
+Menampilkan informasi mengenai Statistik Deskriptif data pada dataset:
+"""
 
 maindf.describe()
 
-"""## 3. EDA - Menangani Missing Value dan Outliers
+"""Perintah maindf.describe() menghasilkan statistik deskriptif dari kolom numerik dalam DataFrame maindf, memberikan gambaran distribusi data seperti:
 
-Memeriksa dan menghapus Missing Values, jika terdapat Missing Values jumlah data akan berubah
+- count: Jumlah data valid (non-null)
+
+- mean: Rata-rata nilai
+
+- std: Standar deviasi (ukuran sebaran data)
+
+- min/max: Nilai minimum dan maksimum
+
+- quartil (25%, 50%, 75%): Batas distribusi data (median = 50%)
+
+Kegunaan:
+- Analisis Awal: Cek sebaran data (apakah ada outlier atau nilai ekstrem).
+
+- Validasi Data: Bandingkan statistik dengan ekspektasi (misal: volume perdagangan tidak mungkin negatif).
+
+- Persiapan Pemodelan: Pahami karakteristik data sebelum normalisasi/transformasi.
+
+(Kolom non-numerik seperti date otomatis diabaikan.)
+
+## 3. EDA - Menangani Missing Value dan Outliers
+
+Fungsi handle_missing_values(df) dirancang untuk mengidentifikasi dan menangani missing values (data hilang) dalam DataFrame secara sistematis, khususnya untuk data time series seperti harga saham. Pertama, fungsi ini menampilkan jumlah missing values per kolom untuk memberikan gambaran awal. Jika ditemukan missing values, fungsi akan melakukan interpolasi linear terlebih dahulu karena metode ini cocok untuk data time series dengan mengisi nilai yang hilang berdasarkan pola data sekitarnya.
+
+Jika masih ada missing values setelah interpolasi (misalnya di awal atau akhir dataset), fungsi akan menggunakan kombinasi forward-fill (mengisi dengan nilai terakhir yang valid) dan back-fill (mengisi dengan nilai berikutnya yang valid) sebagai cadangan. Fungsi ini juga memberikan laporan sebelum dan setelah penanganan untuk memastikan semua missing values telah teratasi, dan mengembalikan DataFrame yang sudah bersih (df_clean). Pendekatan bertahap ini memastikan kelengkapan data sambil mempertahankan karakteristik time series, yang penting untuk analisis finansial.
 """
 
 def handle_missing_values(df):
@@ -147,7 +202,10 @@ maindf_cleaned = handle_missing_values(maindf)
 
 maindf_cleaned
 
-"""Melakukan proses IQR untuk mengatasi outlier"""
+"""maindf_cleaned merupakan versi DataFrame yang telah dibersihkan dari missing values melalui proses interpolasi linear (untuk mengisi celah data berdasarkan pola sekitarnya) dan fallback forward-fill/back-fill (jika interpolasi tidak mencukupi), dihasilkan dari fungsi handle_missing_values() yang sebelumnya mengecek dan menangani nilai kosong secara sistematis - fungsi ini terlebih dahulu menampilkan jumlah missing values awal, melakukan penanganan bertahap, lalu memverifikasi hasilnya dengan menampilkan laporan akhir yang memastikan tidak ada lagi nilai kosong, sehingga DataFrame ini sekarang siap untuk analisis lebih lanjut seperti perhitungan indikator teknikal atau pemodelan prediktif tanpa gangguan data hilang, sementara tetap mempertahankan struktur asli dan karakteristik time series data finansial tersebut.
+
+##Melakukan proses IQR untuk mengatasi outlier
+"""
 
 def handle_outliers(df, column):
     print(f"\n=== Penanganan Outliers pada kolom '{column}' ===")
@@ -174,46 +232,67 @@ columns_to_check = ['Open', 'High', 'Low', 'Close', 'Volume']
 for col in columns_to_check:
     maindf_cleaned = handle_outliers(maindf_cleaned, col)
 
-"""Tampilkan data setelah penanganan outlier:"""
+"""Fungsi **handle_outliers(df, column)** dirancang untuk mendeteksi dan menangani outliers pada kolom tertentu dalam DataFrame menggunakan metode IQR (Interquartile Range), di mana pertama-tama dihitung kuartil bawah (Q1) dan kuartil atas (Q3) untuk menentukan batas bawah (lower_bound = Q1 - 1.5 * IQR) dan batas atas (upper_bound = Q3 + 1.5 * IQR), kemudian mengidentifikasi outliers sebagai nilai yang berada di luar rentang ini. Setelah menampilkan jumlah outliers yang ditemukan, fungsi ini menerapkan teknik winsorizing dengan mengganti nilai outliers yang terdeteksi menggunakan metode clip() untuk membatasi nilai-nilai ekstrem tersebut agar tidak melebihi batas IQR yang telah ditentukan, sehingga distribusi data menjadi lebih stabil tanpa menghilangkan seluruh baris yang mengandung outliers. Contoh penggunaan fungsi ini dilakukan secara iteratif pada kolom-kolom penting seperti 'Open', 'High', 'Low', 'Close', dan 'Volume' dari DataFrame maindf_cleaned yang sebelumnya telah dibersihkan dari missing values, sehingga menghasilkan data yang lebih konsisten dan siap untuk analisis lebih lanjut seperti pemodelan statistik atau visualisasi tanpa distorsi oleh nilai-nilai ekstrem. Outliers ditemukan pada Feature volume dan segera dibersihkan
+
+Tampilkan data setelah penanganan outlier:
+"""
 
 maindf_cleaned
 
-"""Visualisasi data 'Open' setelah penanganan outliers"""
+"""*(DataFrame ini merupakan versi lebih "bersih" dari maindf asli yang siap digunakan untuk analisis lanjutan.)*
+
+Visualisasi data 'Open' setelah penanganan outliers
+"""
 
 plt.figure(figsize=(10, 6))
 sns.boxplot(x=maindf_cleaned['Open'])
 plt.title('Boxplot of Open Price After Outlier Handling')
 plt.show()
 
-"""Visualisasi data 'Close' setelah penanganan outliers"""
+"""*boxplot diatas membuktikan bahwa data pada feature **open** sudah bersih dan tidak ada missing value ataupun outliers karena sudah dilakukan proses pembersihan sebelumnya*
+
+Visualisasi data 'Close' setelah penanganan outliers
+"""
 
 plt.figure(figsize=(10, 6))
 sns.boxplot(x=maindf_cleaned['Close'])
 plt.title('Boxplot of Close Price After Outlier Handling')
 plt.show()
 
-"""Visualisasi data 'High' setelah penanganan outliers"""
+"""*boxplot diatas membuktikan bahwa data pada feature **close** sudah bersih dan tidak ada missing value ataupun outliers karena sudah dilakukan proses pembersihan sebelumnya*
+
+Visualisasi data 'High' setelah penanganan outliers
+"""
 
 plt.figure(figsize=(10, 6))
 sns.boxplot(x=maindf_cleaned['High'])
 plt.title('Boxplot of High Price After Outlier Handling')
 plt.show()
 
-"""Visualisasi data 'Low' setelah penanganan outliers"""
+"""*boxplot diatas membuktikan bahwa data pada feature **high** sudah bersih dan tidak ada missing value ataupun outliers karena sudah dilakukan proses pembersihan sebelumnya*
+
+Visualisasi data 'Low' setelah penanganan outliers
+"""
 
 plt.figure(figsize=(10, 6))
 sns.boxplot(x=maindf_cleaned['Low'])
 plt.title('Boxplot of Low Price After Outlier Handling')
 plt.show()
 
-"""Visualisasi data 'Volume' setelah penanganan outliers"""
+"""*boxplot diatas membuktikan bahwa data pada feature **low** sudah bersih dan tidak ada missing value ataupun outliers karena sudah dilakukan proses pembersihan sebelumnya*
+
+Visualisasi data 'Volume' setelah penanganan outliers
+"""
 
 plt.figure(figsize=(10, 6))
 sns.boxplot(x=maindf_cleaned['Volume'])
 plt.title('Boxplot of Volume After Outlier Handling')
 plt.show()
 
-"""Visualisasi data 'Open', 'Close', 'High', 'Low', dan 'Volume' setelah penanganan outliers dalam boxplot"""
+"""*boxplot diatas membuktikan bahwa data pada feature **volume** sudah bersih dan tidak ada missing value ataupun outliers karena sudah dilakukan proses pembersihan sebelumnya*
+
+Visualisasi data 'Open', 'Close', 'High', 'Low', dan 'Volume' setelah penanganan outliers dalam boxplot
+"""
 
 plt.figure(figsize=(14, 7))
 
@@ -240,7 +319,9 @@ plt.title('Boxplot Volume')
 plt.tight_layout()
 plt.show()
 
-"""## 4. EDA - Univariate Analysis
+"""*Gambar diatas adalah sama dengan 5 gambar sebelumnya namun dijadikan 1 agar lebih mempermudah pem**baca**annya*
+
+## 4. EDA - Univariate Analysis
 
 Univariate Analysis - Histograms untuk seluruh feature
 """
@@ -285,7 +366,12 @@ plt.ylabel('Frequency')
 plt.tight_layout()
 plt.show()
 
-"""Menampilkan Density Plots"""
+"""Terlihat pada gambar diatas bahwa distribusi data pada keseluruhan(5) Feature terdapat perbedaan. Untuk open, high, low, close memiliki rentang nilai yang sama sedangkan volume memiliki nilai distribusi yang berbeda sendiri.
+
+**KEPUTUSAN UNTUK DROP FEATURE VOLUME AKAN DILAKUKAN PADA PROSES-PROSES SETELAHNYA**
+
+Menampilkan Density Plots
+"""
 
 plt.figure(figsize=(12, 6))
 
@@ -312,7 +398,12 @@ plt.title('Density Plot of Volume')
 plt.tight_layout()
 plt.show()
 
-"""Visualisasikan Close Price Time Series"""
+"""Sama seperti pada histogram, terlihat pada gambar diatas bahwa density data pada keseluruhan(5) Feature terdapat perbedaan. Untuk open, high, low, close memiliki rentang nilai yang sama sedangkan volume memiliki nilai pola density yang berbeda sendiri.
+
+**KEPUTUSAN UNTUK DROP FEATURE VOLUME AKAN DILAKUKAN PADA PROSES-PROSES SETELAHNYA**
+
+Visualisasikan Close Price Time Series
+"""
 
 maindf_cleaned['date'] = pd.to_datetime(maindf_cleaned['date'])
 
@@ -331,11 +422,16 @@ plt.title("Monthly Average Close Price of IHSG")
 plt.grid(True)
 plt.show()
 
-"""Menampilkan Descriptive Statistics"""
+"""Gambar diatas adalah bentuk pola time series dari dataset IHSG sejak 1990 hingga hari ini, dapat dilihat juga pola serta fluktiasinya yang cukup tinggi.
+
+Menampilkan Descriptive Statistics
+"""
 
 maindf_cleaned.describe()
 
-"""## 5. EDA - Multivariate Analysis
+"""Statistik Deskriptif diatas pada dasarnya sama seperti Statistik Deskriptif pada tahap **EDA - Deskripsi Variabel**, akan tetapi jumlah angkanya akan sedikit berubah karena sudah dilakukan proses penghilangan missing value dan penghilangan outliers
+
+## 5. EDA - Multivariate Analysis
 
 Melakukan Correlation Matrix
 """
@@ -346,7 +442,10 @@ sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
 plt.title('Correlation Matrix of Stock Prices')
 plt.show()
 
-"""Menampilkan Scatter Plots"""
+"""Pada Correlation Matrix diatas terlihat sangat amat jelas bahwa feature close, low, high, dan open memiliki perbedaan yang hampir **TIDAK ADA** sedangkan volume yang berbeda sendiri dengan angka yang jauh berbeda. Hal ini membuktikan bahwa korelasi antara feature volume dengan feature lainnya berbeda sehingga dapat di buang (**DROP**) di proses-proses selanjutnya.
+
+Menampilkan Scatter Plots
+"""
 
 sns.pairplot(maindf_cleaned[['Open', 'High', 'Low', 'Close', 'Volume']])
 plt.suptitle('Pairplot of Stock Prices', y=1.02)
@@ -367,12 +466,22 @@ close_stock = maindf_cleaned.copy()
 selected_data = maindf_cleaned.reset_index()[['date', 'Close']]
 selected_data
 
-"""kemudian pilih 1000 data terbaru untuk data test dan data train"""
+"""Berdasarkan proses EDA, feature yang akan dipilih dan dijadikan untuk testing serta training adalah feature close. Kemudian kelima data awal dan akhir dari feature date dan close akan ditampilkan seperti pada tabel diatas.
 
-maindf_cleaned_split = maindf_cleaned[-1000:]
+**ANDA BISA MEMBACA LAGI PADA TAHAPAN "EDA - Multivariate Analysis" KENAPA FEATURE CLOSE YANG DIPILIH**
+
+kemudian pilih 1000 data terbaru untuk data test dan data train
+"""
+
+maindf_cleaned_split = selected_data[-1000:]
 maindf_cleaned_split
 
-"""## 2. Bagi data kedalam data train (80%) dan data test (20%)"""
+"""Kenapa hanya 1000 data terbaru yang dipilih untuk training dan testing??
+
+Saya hanya memilih 1000 data terbaru agar kinerja model tetap optimal dan tidak terbebani, karena beberapa model yang saya gunakan tidak mampu membaca data time series yang sangat panjang.
+
+## 2. Bagi data kedalam data train (80%) dan data test (20%)
+"""
 
 from sklearn.model_selection import train_test_split
 
@@ -386,7 +495,10 @@ train_data, test_data = train_test_split(selected_data, test_size=0.2, random_st
 print("Training data shape:", train_data.shape)
 print("Testing data shape:", test_data.shape)
 
-"""## 3. Standarisasi menggunakan metode Min-Max Scaler"""
+"""Baris kode diatas adalah proses untuk melakukan persiapan data time series dengan memilih hanya kolom 'Close' (harga penutupan) sebagai fitur, kemudian membagi data menjadi training set (80%) dan testing set (20%) menggunakan **train_test_split** dari **scikit-learn**. Parameter **shuffle=False** sangat penting karena menjaga urutan kronologis data, mencegah kebocoran informasi dari masa depan ke masa lalu, yang dapat merusak evaluasi model time series. **random_state=42** memastikan hasil yang konsisten, output akhir menampilkan dimensi dari training dan testing set untuk memverifikasi proporsi pembagian data.
+
+## 3. Standarisasi menggunakan metode Min-Max Scaler
+"""
 
 from sklearn.preprocessing import MinMaxScaler
 
@@ -404,40 +516,18 @@ test_data_scaled = pd.DataFrame(test_data_scaled, columns=['Close'], index=test_
 print("Scaled Training data shape:", train_data_scaled.shape)
 print("Scaled Testing data shape:", test_data_scaled.shape)
 
-"""Menampilkan data train yang sudah di normalisasi"""
+"""Proses diatas merupakan proses normalisasi data time series menggunakan **MinMaxScaler** dari **scikit-learn** untuk mengubah nilai fitur 'Close' ke dalam rentang [0, 1], di mana scaler pertama-tama di-fit hanya pada data training (fit_transform) untuk menghindari kebocoran data, kemudian diaplikasikan ke data testing (transform) menggunakan parameter yang sama, sebelum akhirnya dikonversi kembali ke DataFrame dengan indeks asli untuk mempertahankan struktur temporal. Normalisasi ini penting untuk meningkatkan performa model machine learning, terutama yang berbasis gradient descent atau neural networks, dengan memastikan semua fitur berada pada skala yang seragam, sementara pemisahan yang ketat antara proses fitting (hanya pada data training) dan transformasi (pada data testing) menjaga validasi evaluasi model tetap akurat. Outputnya menunjukkan dimensi data yang telah dinormalisasi sesuai dengan pembagian sebelumnya.
+
+Menampilkan 5 data terbaru dan 5 data terlama dari data train yang sudah di normalisasi:
+"""
 
 train_data_scaled
 
-"""Menampilkan data test yang sudah di normalisasi"""
+"""Menampilkan 5 data terbaru dan 5 data terlama dari data test yang sudah di normalisasi:"""
 
 test_data_scaled
 
-"""## 4. Melakukan Reduksi dimensi dengan Principal Component Analysis (PCA)"""
-
-'''
-from sklearn.decomposition import PCA
-
-# Inisialisasi PCA dengan jumlah komponen yang diinginkan (misalnya, 1 komponen)
-pca = PCA(n_components=1)  # Sesuaikan jumlah komponen sesuai kebutuhan
-
-# Fit PCA ke data training yang telah di-scaled
-pca.fit(train_data_scaled)
-
-# Transformasi data training dan testing menggunakan PCA
-train_data_pca = pca.transform(train_data_scaled)
-test_data_pca = pca.transform(test_data_scaled)
-
-# Ubah kembali hasil PCA ke DataFrame (opsional)
-train_data_pca = pd.DataFrame(data=train_data_pca, columns=['PC1'], index=train_data.index)
-test_data_pca = pd.DataFrame(data=test_data_pca, columns=['PC1'], index=test_data.index)
-
-print("PCA Training data shape:", train_data_pca.shape)
-print("PCA Testing data shape:", test_data_pca.shape)
-'''
-
-"""### *PCA digunakan biasanya pada multivariate Time Series, sedangkan yang saya gunakan adalah Univariate Time Series
-
-# D. Model Development
+"""# D. Model Development
 
 ## 1. Long Short Term Memory (LSTM)
 
@@ -474,7 +564,12 @@ X_test_lstm = X_test_lstm.reshape(X_test_lstm.shape[0],X_test_lstm.shape[1] , 1)
 print("X_train: ", X_train_lstm.shape)
 print("X_test: ", X_test_lstm.shape)
 
-"""Tuning Hyperparameter untuk 2 sel kebawah serta menampilkan history saat pelatihan model"""
+"""Untuk 3 sel kode:
+
+Pada kode diatas fungsi create_dataset digunakan untuk mempersiapkan data time series dalam format yang sesuai untuk pemodelan LSTM dengan mengubah deretan data menjadi pasangan input-output berbasis sequence. Fungsi ini mengambil dataset (dengan kolom 'Close') dan parameter **time_step** (jumlah lag), lalu melalui looping, ia membuat input sequence (dataX) yang berisi sekuens nilai sepanjang **time_step** dan output/target (dataY) yang berisi nilai berikutnya setelah sequence tersebut. Hasilnya adalah dua array numpy: dataX (berisi kumpulan sequences untuk training) dan dataY (berisi nilai target yang sesuai), di mana struktur ini memungkinkan LSTM untuk mempelajari pola temporal karena LSTM memerlukan input 3D berupa [samples, time_steps, features]. Misalnya, jika time_step=3, maka untuk data [1, 2, 3, 4, 5], input pertamanya adalah [1, 2, 3] dan targetnya adalah 4 begitu pula jika time_step=10.
+
+Tuning Hyperparameter untuk 2 sel kebawah serta menampilkan history saat pelatihan model
+"""
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
@@ -487,7 +582,10 @@ model_lstm.compile(loss="mean_squared_error",optimizer="adam")
 #menentukan epoch dan batch size
 history_lstm = model_lstm.fit(X_train_lstm,y_train_lstm,validation_data=(X_test_lstm,y_test_lstm),epochs=128,batch_size=16,verbose=1)
 
-"""Menampilkan Plotting Loss dan Validasi Loss"""
+"""Kode tersebut membangun dan melatih model LSTM menggunakan Keras untuk melakukan prediksi regresi (harga penutupan IHSG). Model dibuat secara berurutan (Sequential) dengan satu layer LSTM berisi 100 neuron dan fungsi aktivasi ReLU, yang menerima input berupa urutan data berdimensi satu. Setelah itu, ditambahkan layer Dense dengan satu neuron sebagai output. Model dikompilasi menggunakan loss function mean squared error karena targetnya adalah nilai kontinu, serta menggunakan optimizer Adam yang populer dan efisien. Pelatihan dilakukan dengan data latih dan validasi selama 128 epoch dengan batch size 16, dan proses pelatihannya akan ditampilkan secara rinci karena verbose=1.
+
+Menampilkan Plotting Loss dan Validasi Loss
+"""
 
 loss = history_lstm.history['loss']
 val_loss = history_lstm.history['val_loss']
@@ -502,20 +600,31 @@ plt.figure()
 
 plt.show()
 
-"""Lakukan prediksi dan periksa Performence metrics"""
+"""Kode ini mengekstrak nilai loss (kerugian) dari proses training (loss) dan validasi (val_loss) yang tersimpan dalam objek history_lstm, kemudian membuat visualisasi perbandingan keduanya menggunakan matplotlib dengan sumbu x menunjukkan jumlah epoch (iterasi training) dan sumbu y menunjukkan nilai loss, dimana garis merah ('r') merepresentasikan training loss yang menunjukkan seberapa baik model belajar dari data latih, sementara garis biru ('b') menunjukkan validation loss yang mengindikasikan kemampuan generalisasi model pada data baru, dengan penambahan judul grafik ('Training and validation loss') dan legend untuk memudahkan interpretasi, sehingga kita bisa mengevaluasi apakah model mengalami underfitting/overfitting.
+<br>
+
+Berdasarkan pola kedua kurva tersebut dan menentukan titik optimal dimana validasi loss mulai menurun (indikasi goodfit) dengan training loss terus menurun.
+
+Lakukan prediksi dan periksa Performence metrics
+"""
 
 train_predict_lstm=model_lstm.predict(X_train_lstm)
 test_predict_lstm=model_lstm.predict(X_test_lstm)
 train_predict_lstm.shape, test_predict_lstm.shape
 
-"""Ubah kembali ke bentuk Original (Denormalisasi)"""
+"""Kode tersebut digunakan untuk melakukan prediksi menggunakan model LSTM yang telah dilatih. Baris pertama menghasilkan prediksi terhadap data latih (X_train_lstm) dan menyimpannya ke dalam variabel train_predict_lstm, sedangkan baris kedua menghasilkan prediksi terhadap data uji (X_test_lstm) dan menyimpannya ke dalam test_predict_lstm. Kedua variabel tersebut berisi hasil prediksi model dalam bentuk array berdimensi dua, di mana setiap baris mewakili satu prediksi nilai output. Baris terakhir menampilkan bentuk (shape) dari hasil prediksi untuk data latih dan data uji, yang biasanya berbentuk (jumlah_data, 1) karena model hanya menghasilkan satu nilai output untuk setiap input sequence.
+
+Ubah kembali ke bentuk Original (Denormalisasi)
+"""
 
 train_predict_lstm = scaler.inverse_transform(train_predict_lstm)
 test_predict_lstm = scaler.inverse_transform(test_predict_lstm)
 original_ytrain_lstm = scaler.inverse_transform(y_train_lstm.reshape(-1,1))
 original_ytest_lstm = scaler.inverse_transform(y_test_lstm.reshape(-1,1))
 
-"""## 2. CNN 1D
+"""Kode tersebut digunakan untuk mengembalikan data hasil prediksi dan data asli ke skala aslinya sebelum dilakukan normalisasi (proses inverse transform). Karena data input sebelumnya telah dinormalisasi menggunakan scaler (MinMaxScaler), hasil prediksi dari model (train_predict_lstm dan test_predict_lstm) masih dalam bentuk nilai yang telah diskalakan. Oleh karena itu, scaler.inverse_transform() digunakan untuk mengubah hasil prediksi dan juga nilai target asli (y_train_lstm dan y_test_lstm) kembali ke skala harga sebenarnya. Proses reshape pada y_train_lstm dan y_test_lstm dilakukan agar bentuk array sesuai dengan format yang dibutuhkan oleh inverse_transform, yaitu dua dimensi (n_samples, 1). Hal ini penting agar evaluasi performa model bisa dilakukan secara akurat menggunakan nilai harga yang sesungguhnya.
+
+## 2. CNN 1D
 
 konversikan array nilai menjadi matriks kumpulan data kemudian tuning hyperparameter dan tampilkan history pelatihan modelnya, berlaku untuk 2 sel kebawah
 """
@@ -550,10 +659,15 @@ model_cnn.add(Dense(1))  # Output layer for regression
 model_cnn.compile(optimizer='adam', loss='mse')
 model_cnn.summary()
 
+"""Kode ini membangun model CNN (Convolutional Neural Network) untuk prediksi time series dengan terlebih dahulu mempersiapkan data menggunakan fungsi create_dataset_cnn yang mengubah deret waktu menjadi input-output berbasis sequence dengan time_step=10, kemudian melakukan reshape data menjadi format 3D [samples, time_steps, features] yang sesuai untuk input CNN. Model CNN terdiri dari lapisan Conv1D dengan 64 filter dan kernel size 3 untuk mengekstrak pola lokal dalam data, diikuti MaxPooling1D untuk reduksi dimensi, Flatten untuk mengubah output menjadi vektor, serta dua lapisan Dense (50 neuron dengan aktivasi ReLU dan 1 neuron output tanpa aktivasi untuk regresi) yang dikompilasi dengan optimizer Adam dan loss function MSE (Mean Squared Error). Arsitektur ini dirancang untuk menangkap pola spasial/temporal dalam data deret waktu dengan menganggap sequence sebagai "feature map" 1D yang dapat diproses oleh operasi konvolusi."""
+
 # Train the model
 history_cnn = model_cnn.fit(X_train_cnn, y_train_cnn, epochs=128, batch_size=32, validation_data=(X_test_cnn, y_test_cnn), verbose=1)
 
-"""Menampilkan Plotting Loss dan Validasi Loss"""
+"""Kode tersebut digunakan untuk melatih model CNN (model_cnn) menggunakan data latih (X_train_cnn, y_train_cnn) selama 128 epoch dengan batch size 32. Proses pelatihan ini juga memantau kinerja model terhadap data uji (X_test_cnn, y_test_cnn) sebagai data validasi untuk melihat apakah model mengalami overfitting atau tidak selama pelatihan. Parameter verbose=1 digunakan agar proses pelatihan ditampilkan secara rinci di konsol, termasuk nilai loss dan val_loss di setiap epoch. Hasil pelatihan disimpan dalam variabel history_cnn, yang dapat digunakan untuk memvisualisasikan atau menganalisis performa model dari waktu ke waktu.
+
+Menampilkan Plotting Loss dan Validasi Loss
+"""
 
 loss = history_cnn.history['loss']
 val_loss = history_cnn.history['val_loss']
@@ -568,20 +682,31 @@ plt.figure()
 
 plt.show()
 
-"""Melakukan prediksi dan periksa Performence metrics"""
+"""Kode ini mengekstrak nilai loss (kerugian) dari proses training (loss) dan validasi (val_loss) yang tersimpan dalam objek history_cnn, kemudian membuat visualisasi perbandingan keduanya menggunakan matplotlib dengan sumbu x menunjukkan jumlah epoch (iterasi training) dan sumbu y menunjukkan nilai loss, dimana garis merah ('r') merepresentasikan training loss yang menunjukkan seberapa baik model belajar dari data latih, sementara garis biru ('b') menunjukkan validation loss yang mengindikasikan kemampuan generalisasi model pada data baru, dengan penambahan judul grafik ('Training and validation loss') dan legend untuk memudahkan interpretasi, sehingga kita bisa mengevaluasi apakah model mengalami underfitting/overfitting.
+<br>
+
+Berdasarkan pola kedua kurva tersebut dan menentukan titik optimal dimana validasi loss mulai menurun (indikasi goodfit) dengan training loss terus menurun.
+
+Melakukan prediksi dan periksa Performence metrics
+"""
 
 train_predict_cnn=model_cnn.predict(X_train_cnn)
 test_predict_cnn=model_cnn.predict(X_test_cnn)
 train_predict_cnn.shape, test_predict_cnn.shape
 
-"""Ubah kembali ke bentuk Original (Denormalisasi)"""
+"""Kode tersebut digunakan untuk melakukan prediksi menggunakan model cnn yang telah dilatih. Baris pertama menghasilkan prediksi terhadap data latih (X_train_cnn) dan menyimpannya ke dalam variabel train_predict_cnn, sedangkan baris kedua menghasilkan prediksi terhadap data uji (X_test_cnn) dan menyimpannya ke dalam test_predict_cnn. Kedua variabel tersebut berisi hasil prediksi model dalam bentuk array berdimensi dua, di mana setiap baris mewakili satu prediksi nilai output. Baris terakhir menampilkan bentuk (shape) dari hasil prediksi untuk data latih dan data uji, yang biasanya berbentuk (jumlah_data, 1) karena model hanya menghasilkan satu nilai output untuk setiap input sequence.
+
+Ubah kembali ke bentuk Original (Denormalisasi)
+"""
 
 train_predict_cnn = scaler.inverse_transform(train_predict_cnn)
 test_predict_cnn = scaler.inverse_transform(test_predict_cnn)
 original_ytrain_cnn = scaler.inverse_transform(y_train_cnn.reshape(-1,1))
 original_ytest_cnn = scaler.inverse_transform(y_test_cnn.reshape(-1,1))
 
-"""## 3. GRU
+"""Kode tersebut digunakan untuk mengembalikan data hasil prediksi dan data asli ke skala aslinya sebelum dilakukan normalisasi (proses inverse transform). Karena data input sebelumnya telah dinormalisasi menggunakan scaler (MinMaxScaler), hasil prediksi dari model (train_predict_cnn dan test_predict_cnn) masih dalam bentuk nilai yang telah diskalakan. Oleh karena itu, scaler.inverse_transform() digunakan untuk mengubah hasil prediksi dan juga nilai target asli (y_train_cnn dan y_test_cnn) kembali ke skala harga sebenarnya. Proses reshape pada y_train_cnn dan y_test_cnn dilakukan agar bentuk array sesuai dengan format yang dibutuhkan oleh inverse_transform, yaitu dua dimensi (n_samples, 1). Hal ini penting agar evaluasi performa model bisa dilakukan secara akurat menggunakan nilai harga yang sesungguhnya.
+
+## 3. GRU
 
 konversikan array nilai menjadi matriks kumpulan data kemudian tuning hyperparameter dan tampilkan history pelatihan modelnya
 """
@@ -615,7 +740,12 @@ model_gru.compile(optimizer='adam', loss='mse')
 # Train the GRU model
 history_gru = model_gru.fit(X_train_gru, y_train_gru, epochs=128, batch_size=16, validation_data=(X_test_gru,y_test_gru), verbose=1)
 
-"""Menampilkan Plotting Loss and Validation Loss"""
+"""Kode tersebut membangun dan melatih model GRU (Gated Recurrent Unit) menggunakan Keras untuk melakukan prediksi harga penutupan saham. Pertama, fungsi `create_dataset_gru` membuat dataset berdasarkan window waktu tertentu (`time_step=10`), yaitu dengan mengambil 10 data sebelumnya untuk memprediksi data berikutnya. Dataset hasil pemrosesan kemudian diubah bentuknya menjadi tiga dimensi agar sesuai dengan input yang dibutuhkan GRU: `(jumlah sampel, time steps, fitur)`.
+
+Model GRU dibangun secara berurutan (`Sequential`) dengan satu layer GRU berisi 100 unit dan fungsi aktivasi ReLU, serta satu layer output Dense dengan satu neuron. Model dikompilasi menggunakan optimizer Adam dan loss function mean squared error (MSE), yang umum digunakan untuk masalah regresi. Pelatihan dilakukan selama 128 epoch dengan batch size 16 dan memantau performa pada data uji, sementara hasil pelatihan disimpan dalam `history_gru` untuk dianalisis lebih lanjut.
+
+Menampilkan Plotting Loss and Validation Loss
+"""
 
 loss = history_gru.history['loss']
 val_loss = history_gru.history['val_loss']
@@ -627,7 +757,13 @@ plt.title('Training and validation loss (GRU)')
 plt.legend()
 plt.show()
 
-"""Melakukan prediksi dan Denormalisasi"""
+"""Kode ini mengekstrak nilai loss (kerugian) dari proses training (loss) dan validasi (val_loss) yang tersimpan dalam objek history_gru, kemudian membuat visualisasi perbandingan keduanya menggunakan matplotlib dengan sumbu x menunjukkan jumlah epoch (iterasi training) dan sumbu y menunjukkan nilai loss, dimana garis merah ('r') merepresentasikan training loss yang menunjukkan seberapa baik model belajar dari data latih, sementara garis biru ('b') menunjukkan validation loss yang mengindikasikan kemampuan generalisasi model pada data baru, dengan penambahan judul grafik ('Training and validation loss') dan legend untuk memudahkan interpretasi, sehingga kita bisa mengevaluasi apakah model mengalami underfitting/overfitting.
+<br>
+
+Berdasarkan pola kedua kurva tersebut dan menentukan titik optimal dimana validasi loss mulai menurun (indikasi goodfit) dengan training loss terus menurun.
+
+Melakukan prediksi dan Denormalisasi
+"""
 
 # Make predictions
 train_predict_gru = model_gru.predict(X_train_gru)
@@ -636,10 +772,12 @@ test_predict_gru = model_gru.predict(X_test_gru)
 # Inverse transform the predictions and actual values
 train_predict_gru = scaler.inverse_transform(train_predict_gru)
 test_predict_gru = scaler.inverse_transform(test_predict_gru)
-original_ytrain_gru = scaler.inverse_transform(y_train_lstm.reshape(-1,1)) # Use y_train_lstm here
-original_ytest_gru = scaler.inverse_transform(y_test_lstm.reshape(-1,1)) # Use y_test_lstm here
+original_ytrain_gru = scaler.inverse_transform(y_train_gru.reshape(-1,1))
+original_ytest_gru = scaler.inverse_transform(y_test_gru.reshape(-1,1))
 
-"""# E. Evaluasi Model
+"""Kode tersebut digunakan untuk menghasilkan prediksi harga dari model GRU yang telah dilatih, serta mengembalikan nilai prediksi dan nilai aktual ke skala aslinya. Pertama, model melakukan prediksi terhadap data latih (`X_train_gru`) dan data uji (`X_test_gru`), lalu hasil prediksi tersebut disimpan dalam `train_predict_gru` dan `test_predict_gru`. Karena data sebelumnya telah dinormalisasi menggunakan `scaler` (MinMaxScaler), maka fungsi `inverse_transform()` digunakan untuk mengubah hasil prediksi serta data target asli (`y_train_gru` dan `y_test_gru`) kembali ke bentuk harga sebenarnya. Reshape dilakukan pada `y_train_gru` dan `y_test_gru` agar sesuai dengan format dua dimensi yang dibutuhkan oleh `inverse_transform`, sehingga hasil evaluasi dan visualisasi dapat mencerminkan nilai riil dari harga penutupan saham.
+
+# E. Evaluasi Model
 
 ## 1. Evaluasi Model LSTM
 """
@@ -773,6 +911,8 @@ print("\nModel terbaik berdasarkan Evaluasi:")
 df_results_sorted
 
 """**Berdasarkan Hasil Evaluasi Model, LSTM merupakan Model Terbaik untuk studi kasus Time Series univariate**
+
+**ALASAN LSTM MENJADI MODEL TERBAIK KARENA SKOR MSE UNTUK DATA TRAIN DAN DATA TEST MENJADI YANG TERKECIL SEPERTI PADA TABEL DIATAS, LALU SKOR RMSE UNTUK KEDUA DATA JUGA MENJADI YANG TERKECIL DARI KEDUA MODEL LAINNYA, LALU UNTUK MAE DATA TRAIN DAN DATA TEST LSTM UNGGUL DARI KEDUA MODEL LAINNYA DENGAN MENJADI MODEL DENGAN SKOR TERKECIL, UNTUK MAPE DARI KEDUA DATA LSTM UNGGUL DARI KEDUA MODEL LAINNYA, DAN TERAKHIR UNTUK SKOR R2 LSTM LAH YANG PALING UNGGUL DARI KEDUA MODEL LAINNYA DENGAN SKOR R2 PALING MENDEKATI 1.**
 
 Maka dari itu Model **LSTM** yang akan dipilih untuk dijadikan implementasi.
 
