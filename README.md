@@ -551,8 +551,10 @@ Maka dari itu Model **LSTM** yang akan dipilih untuk dijadikan implementasi.
 ![image](https://github.com/user-attachments/assets/19018356-aecb-4f2f-828c-cccc7d14cc2a)
 
 ### Data Sebelum dan Sesudah Prediksi
-![beforeafterihsg](https://github.com/user-attachments/assets/79844f41-43ee-49f0-a97d-2659551a11ba)
+![hehe](https://github.com/user-attachments/assets/68d8fc83-1545-417e-bef9-0e0da0542e79)
+
 
 ### Contoh penggunaan untuk prediksi 7 hari kedepan
-![image](https://github.com/user-attachments/assets/7536eb61-a926-4b8b-93cb-dcae1e4777c8)
+![image](https://github.com/user-attachments/assets/5a6653d4-8df4-4d2e-8416-f56ca1746176)
+
 
