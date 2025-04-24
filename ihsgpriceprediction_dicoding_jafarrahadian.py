@@ -12,8 +12,8 @@ Proyek Predictive Analytics: Prediksi Harga IHSG (^JKSE)
 Mengikuti Metode CRISP-DM 6 Fase
 
 Problem Steatment:
-- IHSG (^JKSE) memiliki tingkat volatilitas yang tinggi, sehingga menyulitkan investor dan analis dalam memprediksi harga penutupan secara akurat, yang berdampak pada pengambilan keputusan investasi.
-- Masih minim penelitian yang secara khusus mengeksplorasi dan membandingkan efektivitas berbagai pendekatan deep learning dalam menangani permasalahan prediksi harga penutupan IHSG. Terkhusus pada penerapan model deep learning seperti LSTM, CNN, dan GRU secara individual untuk memprediksi harga penutupan IHSG.
+- Pada saat ini jenis investasi banyak ragamnya salah satunya yaitu dibidang Saham, salah satu jenis saham yang sedang viral di indonesia saat ini ada IHSG karena terjadi penurunan terus menerus dan IHSG (^JKSE) juga memiliki tingkat volatilitas yang tinggi, sehingga menyulitkan investor dan analis dalam memprediksi harga penutupan secara akurat, yang berdampak pada pengambilan keputusan investasi.
+- Di tengah tingginya volatilitas pasar saham, khususnya IHSG, kebutuhan akan sistem prediksi harga yang akurat menjadi semakin mendesak bagi pelaku industri keuangan dan investor untuk mengambil keputusan yang tepat dan mengurangi risiko kerugian. Namun, masih sangat minim riset yang secara spesifik membandingkan efektivitas berbagai pendekatan Machine Learning, terutama model deep learning seperti LSTM, CNN, dan GRU, dalam konteks prediksi harga penutupan IHSG. Ketiadaan referensi yang kuat dan teruji di lapangan menyebabkan banyak perusahaan dan institusi keuangan belum dapat memanfaatkan potensi teknologi ini secara optimal untuk mendukung strategi investasi dan pengelolaan portofolio.
 
 Goals:
 - Menghasilkan model prediksi IHSG yang mampu mengurangi nilai error (MSE, RMSE MAE, MAPE, dan R2) dengan membandingkan model LSTM, CNN, dan GRU secara individual.
@@ -161,7 +161,172 @@ Kegunaan:
 
 (Kolom non-numerik seperti date otomatis diabaikan.)
 
-## 3. EDA - Menangani Missing Value dan Outliers
+## 3. EDA - Univariate Analysis
+
+Univariate Analysis - Visualisasi boxplot feature 'Open', 'Close', 'High', 'Low', dan 'Volume' untuk melihat outliers dalam data
+"""
+
+plt.figure(figsize=(14, 7))
+
+plt.subplot(2, 3, 1)
+sns.boxplot(x=maindf['Open'])
+plt.title('Boxplot Open Price')
+
+plt.subplot(2, 3, 2)
+sns.boxplot(x=maindf['Close'])
+plt.title('Boxplot Close Price')
+
+plt.subplot(2, 3, 3)
+sns.boxplot(x=maindf['High'])
+plt.title('Boxplot High Price')
+
+plt.subplot(2, 3, 4)
+sns.boxplot(x=maindf['Low'])
+plt.title('Boxplot Low Price')
+
+plt.subplot(2, 3, 5)
+sns.boxplot(x=maindf['Volume'])
+plt.title('Boxplot Volume')
+
+plt.tight_layout()
+plt.show()
+
+"""Boxplot diatas hanya berfungsi untuk menampilkan apakah ada **OUTLIERS** pada data **TANPA PENGAMBILAN KEPUTUSAN APAPUN**, untuk data cleansing akan dilakukan pada tahapan **DATA PREPARATION**.
+
+Outlier sendiri adalah observasi yang terletak pada jarak abnormal dari nilai lain dalam sampel acak dari suatu populasi dalam data.
+
+Dapat dilihat pada boxplot diatas bahwa hanya pada feature volume terjadinya peristiwa outliers sedangkan pada feature lain aman tanpa terjadinya outliers.
+
+Univariate Analysis - Histograms untuk seluruh feature
+"""
+
+plt.figure(figsize=(14, 7))
+
+# Histogram 'Open'
+plt.subplot(2, 3, 1)
+plt.hist(maindf['Open'], bins=30, color='skyblue', edgecolor='black')
+plt.title('Distribution of Open Prices')
+plt.xlabel('Open Price')
+plt.ylabel('Frequency')
+
+# Histogram 'High'
+plt.subplot(2, 3, 2)
+plt.hist(maindf['High'], bins=30, color='lightcoral', edgecolor='black')
+plt.title('Distribution of High Prices')
+plt.xlabel('High Price')
+plt.ylabel('Frequency')
+
+# Histogram 'Low'
+plt.subplot(2, 3, 3)
+plt.hist(maindf['Low'], bins=30, color='lightgreen', edgecolor='black')
+plt.title('Distribution of Low Prices')
+plt.xlabel('Low Price')
+plt.ylabel('Frequency')
+
+# Histogram 'Close'
+plt.subplot(2, 3, 4)
+plt.hist(maindf['Close'], bins=30, color='gold', edgecolor='black')
+plt.title('Distribution of Close Prices')
+plt.xlabel('Close Price')
+plt.ylabel('Frequency')
+
+# Histogram 'Volume'
+plt.subplot(2, 3, 5)
+plt.hist(maindf['Volume'], bins=30, color='lightpink', edgecolor='black')
+plt.title('Distribution of Volume')
+plt.xlabel('Volume')
+plt.ylabel('Frequency')
+
+plt.tight_layout()
+plt.show()
+
+"""Terlihat pada gambar diatas bahwa distribusi data pada keseluruhan(5) Feature terdapat perbedaan. Untuk open, high, low, close memiliki rentang nilai yang sama sedangkan volume memiliki nilai distribusi yang berbeda sendiri.
+
+**KEPUTUSAN UNTUK DROP FEATURE VOLUME AKAN DILAKUKAN PADA PROSES-PROSES SETELAHNYA**
+
+Menampilkan Density Plots
+"""
+
+plt.figure(figsize=(12, 6))
+
+plt.subplot(2, 3, 1)
+sns.kdeplot(maindf['Open'], shade=True, color='skyblue')
+plt.title('Density Plot of Open Prices')
+
+plt.subplot(2, 3, 2)
+sns.kdeplot(maindf['High'], shade=True, color='lightcoral')
+plt.title('Density Plot of High Prices')
+
+plt.subplot(2, 3, 3)
+sns.kdeplot(maindf['Low'], shade=True, color='lightgreen')
+plt.title('Density Plot of Low Prices')
+
+plt.subplot(2, 3, 4)
+sns.kdeplot(maindf['Close'], shade=True, color='gold')
+plt.title('Density Plot of Close Prices')
+
+plt.subplot(2, 3, 5)
+sns.kdeplot(maindf['Volume'], shade=True, color='lightpink')
+plt.title('Density Plot of Volume')
+
+plt.tight_layout()
+plt.show()
+
+"""Sama seperti pada histogram, terlihat pada gambar diatas bahwa density data pada keseluruhan(5) Feature terdapat perbedaan. Untuk open, high, low, close memiliki rentang nilai yang sama sedangkan volume memiliki nilai pola density yang berbeda sendiri.
+
+**KEPUTUSAN UNTUK DROP FEATURE VOLUME AKAN DILAKUKAN PADA PROSES-PROSES SETELAHNYA**
+
+Visualisasikan Close Price Time Series
+"""
+
+maindf['date'] = pd.to_datetime(maindf['date'])
+
+# Set 'date' as index
+maindf = maindf.set_index('date')
+
+# Resample to monthly frequency and take the mean of 'Close' price
+monthly_data = maindf['Close'].resample('M').mean()
+
+# Create the plot
+plt.figure(figsize=(14, 7))
+plt.plot(monthly_data.index, monthly_data.values)
+plt.xlabel("Date")
+plt.ylabel("Average Monthly Close Price")
+plt.title("Monthly Average Close Price of IHSG")
+plt.grid(True)
+plt.show()
+
+"""Gambar diatas adalah bentuk pola time series dari dataset IHSG sejak 1990 hingga hari ini, dapat dilihat juga pola serta fluktiasinya yang cukup tinggi.
+
+## 4. EDA - Multivariate Analysis
+
+Melakukan Correlation Matrix
+"""
+
+correlation_matrix = maindf[['Open', 'High', 'Low', 'Close', 'Volume']].corr()
+plt.figure(figsize=(8, 6))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Correlation Matrix of Stock Prices')
+plt.show()
+
+"""Pada Correlation Matrix diatas terlihat sangat amat jelas bahwa feature close, low, high, dan open memiliki perbedaan yang hampir **TIDAK ADA** sedangkan volume yang berbeda sendiri dengan angka yang jauh berbeda. Hal ini membuktikan bahwa korelasi antara feature volume dengan feature lainnya berbeda sehingga dapat di buang (**DROP**) di proses-proses selanjutnya.
+
+Menampilkan Scatter Plots
+"""
+
+sns.pairplot(maindf[['Open', 'High', 'Low', 'Close', 'Volume']])
+plt.suptitle('Pairplot of Stock Prices', y=1.02)
+plt.show()
+
+"""Kesimpulan:
+1. **Karena Volume tidak memiliki korelasi yang kuat dengan data lainnya maka tidak dipilih**. (DROP)
+2. **Close yang akan dipilih karena dari keempat parameter lainnya hasilnya hampir sama**.
+
+# C. Data Preparation
+
+## 1. Menangani Missing Value dan Outliers
+
+### Mengatasi Missing Value:
 
 Fungsi handle_missing_values(df) dirancang untuk mengidentifikasi dan menangani missing values (data hilang) dalam DataFrame secara sistematis, khususnya untuk data time series seperti harga saham. Pertama, fungsi ini menampilkan jumlah missing values per kolom untuk memberikan gambaran awal. Jika ditemukan missing values, fungsi akan melakukan interpolasi linear terlebih dahulu karena metode ini cocok untuk data time series dengan mengisi nilai yang hilang berdasarkan pola data sekitarnya.
 
@@ -198,13 +363,10 @@ def handle_missing_values(df):
 # Contoh penggunaan
 maindf_cleaned = handle_missing_values(maindf)
 
-"""Tampilkan data setelah penanganan missing values:"""
+"""### Melakukan proses IQR untuk mengatasi outlier:
 
-maindf_cleaned
 
-"""maindf_cleaned merupakan versi DataFrame yang telah dibersihkan dari missing values melalui proses interpolasi linear (untuk mengisi celah data berdasarkan pola sekitarnya) dan fallback forward-fill/back-fill (jika interpolasi tidak mencukupi), dihasilkan dari fungsi handle_missing_values() yang sebelumnya mengecek dan menangani nilai kosong secara sistematis - fungsi ini terlebih dahulu menampilkan jumlah missing values awal, melakukan penanganan bertahap, lalu memverifikasi hasilnya dengan menampilkan laporan akhir yang memastikan tidak ada lagi nilai kosong, sehingga DataFrame ini sekarang siap untuk analisis lebih lanjut seperti perhitungan indikator teknikal atau pemodelan prediktif tanpa gangguan data hilang, sementara tetap mempertahankan struktur asli dan karakteristik time series data finansial tersebut.
 
-##Melakukan proses IQR untuk mengatasi outlier
 """
 
 def handle_outliers(df, column):
@@ -232,232 +394,39 @@ columns_to_check = ['Open', 'High', 'Low', 'Close', 'Volume']
 for col in columns_to_check:
     maindf_cleaned = handle_outliers(maindf_cleaned, col)
 
-"""Fungsi **handle_outliers(df, column)** dirancang untuk mendeteksi dan menangani outliers pada kolom tertentu dalam DataFrame menggunakan metode IQR (Interquartile Range), di mana pertama-tama dihitung kuartil bawah (Q1) dan kuartil atas (Q3) untuk menentukan batas bawah (lower_bound = Q1 - 1.5 * IQR) dan batas atas (upper_bound = Q3 + 1.5 * IQR), kemudian mengidentifikasi outliers sebagai nilai yang berada di luar rentang ini. Setelah menampilkan jumlah outliers yang ditemukan, fungsi ini menerapkan teknik winsorizing dengan mengganti nilai outliers yang terdeteksi menggunakan metode clip() untuk membatasi nilai-nilai ekstrem tersebut agar tidak melebihi batas IQR yang telah ditentukan, sehingga distribusi data menjadi lebih stabil tanpa menghilangkan seluruh baris yang mengandung outliers. Contoh penggunaan fungsi ini dilakukan secara iteratif pada kolom-kolom penting seperti 'Open', 'High', 'Low', 'Close', dan 'Volume' dari DataFrame maindf_cleaned yang sebelumnya telah dibersihkan dari missing values, sehingga menghasilkan data yang lebih konsisten dan siap untuk analisis lebih lanjut seperti pemodelan statistik atau visualisasi tanpa distorsi oleh nilai-nilai ekstrem. Outliers ditemukan pada Feature volume dan segera dibersihkan
+"""Memeriksa null dan outliers menggunakan plot setelah proses Cleansing"""
 
-Tampilkan data setelah penanganan outlier:
-"""
-
-maindf_cleaned
-
-"""*(DataFrame ini merupakan versi lebih "bersih" dari maindf asli yang siap digunakan untuk analisis lanjutan.)*
-
-Visualisasi data 'Open' setelah penanganan outliers
-"""
-
-plt.figure(figsize=(10, 6))
-sns.boxplot(x=maindf_cleaned['Open'])
-plt.title('Boxplot of Open Price After Outlier Handling')
-plt.show()
-
-"""*boxplot diatas membuktikan bahwa data pada feature **open** sudah bersih dan tidak ada missing value ataupun outliers karena sudah dilakukan proses pembersihan sebelumnya*
-
-Visualisasi data 'Close' setelah penanganan outliers
-"""
-
-plt.figure(figsize=(10, 6))
-sns.boxplot(x=maindf_cleaned['Close'])
-plt.title('Boxplot of Close Price After Outlier Handling')
-plt.show()
-
-"""*boxplot diatas membuktikan bahwa data pada feature **close** sudah bersih dan tidak ada missing value ataupun outliers karena sudah dilakukan proses pembersihan sebelumnya*
-
-Visualisasi data 'High' setelah penanganan outliers
-"""
-
-plt.figure(figsize=(10, 6))
-sns.boxplot(x=maindf_cleaned['High'])
-plt.title('Boxplot of High Price After Outlier Handling')
-plt.show()
-
-"""*boxplot diatas membuktikan bahwa data pada feature **high** sudah bersih dan tidak ada missing value ataupun outliers karena sudah dilakukan proses pembersihan sebelumnya*
-
-Visualisasi data 'Low' setelah penanganan outliers
-"""
-
-plt.figure(figsize=(10, 6))
-sns.boxplot(x=maindf_cleaned['Low'])
-plt.title('Boxplot of Low Price After Outlier Handling')
-plt.show()
-
-"""*boxplot diatas membuktikan bahwa data pada feature **low** sudah bersih dan tidak ada missing value ataupun outliers karena sudah dilakukan proses pembersihan sebelumnya*
-
-Visualisasi data 'Volume' setelah penanganan outliers
-"""
-
-plt.figure(figsize=(10, 6))
-sns.boxplot(x=maindf_cleaned['Volume'])
-plt.title('Boxplot of Volume After Outlier Handling')
-plt.show()
-
-"""*boxplot diatas membuktikan bahwa data pada feature **volume** sudah bersih dan tidak ada missing value ataupun outliers karena sudah dilakukan proses pembersihan sebelumnya*
-
-Visualisasi data 'Open', 'Close', 'High', 'Low', dan 'Volume' setelah penanganan outliers dalam boxplot
-"""
+print("\nNull value counts after Cleansing:")
+print(maindf_cleaned.isnull().sum())
 
 plt.figure(figsize=(14, 7))
 
 plt.subplot(2, 3, 1)
 sns.boxplot(x=maindf_cleaned['Open'])
-plt.title('Boxplot Open Price')
+plt.title('Boxplot Open Price (Cleaned)')
 
 plt.subplot(2, 3, 2)
 sns.boxplot(x=maindf_cleaned['Close'])
-plt.title('Boxplot Close Price')
+plt.title('Boxplot Close Price (Cleaned)')
 
 plt.subplot(2, 3, 3)
 sns.boxplot(x=maindf_cleaned['High'])
-plt.title('Boxplot High Price')
+plt.title('Boxplot High Price (Cleaned)')
 
 plt.subplot(2, 3, 4)
 sns.boxplot(x=maindf_cleaned['Low'])
-plt.title('Boxplot Low Price')
+plt.title('Boxplot Low Price (Cleaned)')
 
 plt.subplot(2, 3, 5)
 sns.boxplot(x=maindf_cleaned['Volume'])
-plt.title('Boxplot Volume')
+plt.title('Boxplot Volume (Cleaned)')
 
 plt.tight_layout()
 plt.show()
 
-"""*Gambar diatas adalah sama dengan 5 gambar sebelumnya namun dijadikan 1 agar lebih mempermudah pem**baca**annya*
+"""Dapat dilihat pada boxplot diatas bahwa setelah dilakukannya proses pembersihan data menggunakan interpolasi dan IQR data menjadi lebih teratur dan dapat digunakan untuk ke proses selanjutnya.
 
-## 4. EDA - Univariate Analysis
-
-Univariate Analysis - Histograms untuk seluruh feature
-"""
-
-plt.figure(figsize=(14, 7))
-
-# Histogram 'Open'
-plt.subplot(2, 3, 1)
-plt.hist(maindf_cleaned['Open'], bins=30, color='skyblue', edgecolor='black')
-plt.title('Distribution of Open Prices')
-plt.xlabel('Open Price')
-plt.ylabel('Frequency')
-
-# Histogram 'High'
-plt.subplot(2, 3, 2)
-plt.hist(maindf_cleaned['High'], bins=30, color='lightcoral', edgecolor='black')
-plt.title('Distribution of High Prices')
-plt.xlabel('High Price')
-plt.ylabel('Frequency')
-
-# Histogram 'Low'
-plt.subplot(2, 3, 3)
-plt.hist(maindf_cleaned['Low'], bins=30, color='lightgreen', edgecolor='black')
-plt.title('Distribution of Low Prices')
-plt.xlabel('Low Price')
-plt.ylabel('Frequency')
-
-# Histogram 'Close'
-plt.subplot(2, 3, 4)
-plt.hist(maindf_cleaned['Close'], bins=30, color='gold', edgecolor='black')
-plt.title('Distribution of Close Prices')
-plt.xlabel('Close Price')
-plt.ylabel('Frequency')
-
-# Histogram 'Volume'
-plt.subplot(2, 3, 5)
-plt.hist(maindf_cleaned['Volume'], bins=30, color='lightpink', edgecolor='black')
-plt.title('Distribution of Volume')
-plt.xlabel('Volume')
-plt.ylabel('Frequency')
-
-plt.tight_layout()
-plt.show()
-
-"""Terlihat pada gambar diatas bahwa distribusi data pada keseluruhan(5) Feature terdapat perbedaan. Untuk open, high, low, close memiliki rentang nilai yang sama sedangkan volume memiliki nilai distribusi yang berbeda sendiri.
-
-**KEPUTUSAN UNTUK DROP FEATURE VOLUME AKAN DILAKUKAN PADA PROSES-PROSES SETELAHNYA**
-
-Menampilkan Density Plots
-"""
-
-plt.figure(figsize=(12, 6))
-
-plt.subplot(2, 3, 1)
-sns.kdeplot(maindf_cleaned['Open'], shade=True, color='skyblue')
-plt.title('Density Plot of Open Prices')
-
-plt.subplot(2, 3, 2)
-sns.kdeplot(maindf_cleaned['High'], shade=True, color='lightcoral')
-plt.title('Density Plot of High Prices')
-
-plt.subplot(2, 3, 3)
-sns.kdeplot(maindf_cleaned['Low'], shade=True, color='lightgreen')
-plt.title('Density Plot of Low Prices')
-
-plt.subplot(2, 3, 4)
-sns.kdeplot(maindf_cleaned['Close'], shade=True, color='gold')
-plt.title('Density Plot of Close Prices')
-
-plt.subplot(2, 3, 5)
-sns.kdeplot(maindf_cleaned['Volume'], shade=True, color='lightpink')
-plt.title('Density Plot of Volume')
-
-plt.tight_layout()
-plt.show()
-
-"""Sama seperti pada histogram, terlihat pada gambar diatas bahwa density data pada keseluruhan(5) Feature terdapat perbedaan. Untuk open, high, low, close memiliki rentang nilai yang sama sedangkan volume memiliki nilai pola density yang berbeda sendiri.
-
-**KEPUTUSAN UNTUK DROP FEATURE VOLUME AKAN DILAKUKAN PADA PROSES-PROSES SETELAHNYA**
-
-Visualisasikan Close Price Time Series
-"""
-
-maindf_cleaned['date'] = pd.to_datetime(maindf_cleaned['date'])
-
-# Set 'date' as index
-maindf_cleaned = maindf_cleaned.set_index('date')
-
-# Resample to monthly frequency and take the mean of 'Close' price
-monthly_data = maindf_cleaned['Close'].resample('M').mean()
-
-# Create the plot
-plt.figure(figsize=(14, 7))
-plt.plot(monthly_data.index, monthly_data.values)
-plt.xlabel("Date")
-plt.ylabel("Average Monthly Close Price")
-plt.title("Monthly Average Close Price of IHSG")
-plt.grid(True)
-plt.show()
-
-"""Gambar diatas adalah bentuk pola time series dari dataset IHSG sejak 1990 hingga hari ini, dapat dilihat juga pola serta fluktiasinya yang cukup tinggi.
-
-Menampilkan Descriptive Statistics
-"""
-
-maindf_cleaned.describe()
-
-"""Statistik Deskriptif diatas pada dasarnya sama seperti Statistik Deskriptif pada tahap **EDA - Deskripsi Variabel**, akan tetapi jumlah angkanya akan sedikit berubah karena sudah dilakukan proses penghilangan missing value dan penghilangan outliers
-
-## 5. EDA - Multivariate Analysis
-
-Melakukan Correlation Matrix
-"""
-
-correlation_matrix = maindf_cleaned[['Open', 'High', 'Low', 'Close', 'Volume']].corr()
-plt.figure(figsize=(8, 6))
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
-plt.title('Correlation Matrix of Stock Prices')
-plt.show()
-
-"""Pada Correlation Matrix diatas terlihat sangat amat jelas bahwa feature close, low, high, dan open memiliki perbedaan yang hampir **TIDAK ADA** sedangkan volume yang berbeda sendiri dengan angka yang jauh berbeda. Hal ini membuktikan bahwa korelasi antara feature volume dengan feature lainnya berbeda sehingga dapat di buang (**DROP**) di proses-proses selanjutnya.
-
-Menampilkan Scatter Plots
-"""
-
-sns.pairplot(maindf_cleaned[['Open', 'High', 'Low', 'Close', 'Volume']])
-plt.suptitle('Pairplot of Stock Prices', y=1.02)
-plt.show()
-
-"""Kesimpulan:
-1. **Karena Volume tidak memiliki korelasi yang kuat dengan data lainnya maka tidak dipilih**. (DROP)
-2. **Close yang akan dipilih karena dari keempat parameter lainnya hasilnya hampir sama**.
-
-# C. Data Preparation
-
-## 1. Encoding data dan pilih Feature Date dan Close
+## 2. Encoding data dan pilih Feature Date dan Close
 """
 
 # Select 'date' and 'Close' columns
@@ -480,7 +449,7 @@ maindf_cleaned_split
 
 Saya hanya memilih 1000 data terbaru agar kinerja model tetap optimal dan tidak terbebani, karena beberapa model yang saya gunakan tidak mampu membaca data time series yang sangat panjang.
 
-## 2. Bagi data kedalam data train (80%) dan data test (20%)
+## 3. Bagi data kedalam data train (80%) dan data test (20%)
 """
 
 from sklearn.model_selection import train_test_split
@@ -497,7 +466,7 @@ print("Testing data shape:", test_data.shape)
 
 """Baris kode diatas adalah proses untuk melakukan persiapan data time series dengan memilih hanya kolom 'Close' (harga penutupan) sebagai fitur, kemudian membagi data menjadi training set (80%) dan testing set (20%) menggunakan **train_test_split** dari **scikit-learn**. Parameter **shuffle=False** sangat penting karena menjaga urutan kronologis data, mencegah kebocoran informasi dari masa depan ke masa lalu, yang dapat merusak evaluasi model time series. **random_state=42** memastikan hasil yang konsisten, output akhir menampilkan dimensi dari training dan testing set untuk memverifikasi proporsi pembagian data.
 
-## 3. Standarisasi menggunakan metode Min-Max Scaler
+## 4. Standarisasi menggunakan metode Min-Max Scaler
 """
 
 from sklearn.preprocessing import MinMaxScaler
@@ -584,27 +553,6 @@ history_lstm = model_lstm.fit(X_train_lstm,y_train_lstm,validation_data=(X_test_
 
 """Kode tersebut membangun dan melatih model LSTM menggunakan Keras untuk melakukan prediksi regresi (harga penutupan IHSG). Model dibuat secara berurutan (Sequential) dengan satu layer LSTM berisi 100 neuron dan fungsi aktivasi ReLU, yang menerima input berupa urutan data berdimensi satu. Setelah itu, ditambahkan layer Dense dengan satu neuron sebagai output. Model dikompilasi menggunakan loss function mean squared error karena targetnya adalah nilai kontinu, serta menggunakan optimizer Adam yang populer dan efisien. Pelatihan dilakukan dengan data latih dan validasi selama 128 epoch dengan batch size 16, dan proses pelatihannya akan ditampilkan secara rinci karena verbose=1.
 
-Menampilkan Plotting Loss dan Validasi Loss
-"""
-
-loss = history_lstm.history['loss']
-val_loss = history_lstm.history['val_loss']
-
-epochs = range(len(loss))
-
-plt.plot(epochs, loss, 'r', label='Training loss')
-plt.plot(epochs, val_loss, 'b', label='Validation loss')
-plt.title('Training and validation loss')
-plt.legend(loc=0)
-plt.figure()
-
-plt.show()
-
-"""Kode ini mengekstrak nilai loss (kerugian) dari proses training (loss) dan validasi (val_loss) yang tersimpan dalam objek history_lstm, kemudian membuat visualisasi perbandingan keduanya menggunakan matplotlib dengan sumbu x menunjukkan jumlah epoch (iterasi training) dan sumbu y menunjukkan nilai loss, dimana garis merah ('r') merepresentasikan training loss yang menunjukkan seberapa baik model belajar dari data latih, sementara garis biru ('b') menunjukkan validation loss yang mengindikasikan kemampuan generalisasi model pada data baru, dengan penambahan judul grafik ('Training and validation loss') dan legend untuk memudahkan interpretasi, sehingga kita bisa mengevaluasi apakah model mengalami underfitting/overfitting.
-<br>
-
-Berdasarkan pola kedua kurva tersebut dan menentukan titik optimal dimana validasi loss mulai menurun (indikasi goodfit) dengan training loss terus menurun.
-
 Lakukan prediksi dan periksa Performence metrics
 """
 
@@ -666,27 +614,6 @@ history_cnn = model_cnn.fit(X_train_cnn, y_train_cnn, epochs=128, batch_size=32,
 
 """Kode tersebut digunakan untuk melatih model CNN (model_cnn) menggunakan data latih (X_train_cnn, y_train_cnn) selama 128 epoch dengan batch size 32. Proses pelatihan ini juga memantau kinerja model terhadap data uji (X_test_cnn, y_test_cnn) sebagai data validasi untuk melihat apakah model mengalami overfitting atau tidak selama pelatihan. Parameter verbose=1 digunakan agar proses pelatihan ditampilkan secara rinci di konsol, termasuk nilai loss dan val_loss di setiap epoch. Hasil pelatihan disimpan dalam variabel history_cnn, yang dapat digunakan untuk memvisualisasikan atau menganalisis performa model dari waktu ke waktu.
 
-Menampilkan Plotting Loss dan Validasi Loss
-"""
-
-loss = history_cnn.history['loss']
-val_loss = history_cnn.history['val_loss']
-
-epochs = range(len(loss))
-
-plt.plot(epochs, loss, 'r', label='Training loss')
-plt.plot(epochs, val_loss, 'b', label='Validation loss')
-plt.title('Training and validation loss')
-plt.legend(loc=0)
-plt.figure()
-
-plt.show()
-
-"""Kode ini mengekstrak nilai loss (kerugian) dari proses training (loss) dan validasi (val_loss) yang tersimpan dalam objek history_cnn, kemudian membuat visualisasi perbandingan keduanya menggunakan matplotlib dengan sumbu x menunjukkan jumlah epoch (iterasi training) dan sumbu y menunjukkan nilai loss, dimana garis merah ('r') merepresentasikan training loss yang menunjukkan seberapa baik model belajar dari data latih, sementara garis biru ('b') menunjukkan validation loss yang mengindikasikan kemampuan generalisasi model pada data baru, dengan penambahan judul grafik ('Training and validation loss') dan legend untuk memudahkan interpretasi, sehingga kita bisa mengevaluasi apakah model mengalami underfitting/overfitting.
-<br>
-
-Berdasarkan pola kedua kurva tersebut dan menentukan titik optimal dimana validasi loss mulai menurun (indikasi goodfit) dengan training loss terus menurun.
-
 Melakukan prediksi dan periksa Performence metrics
 """
 
@@ -744,24 +671,6 @@ history_gru = model_gru.fit(X_train_gru, y_train_gru, epochs=128, batch_size=16,
 
 Model GRU dibangun secara berurutan (`Sequential`) dengan satu layer GRU berisi 100 unit dan fungsi aktivasi ReLU, serta satu layer output Dense dengan satu neuron. Model dikompilasi menggunakan optimizer Adam dan loss function mean squared error (MSE), yang umum digunakan untuk masalah regresi. Pelatihan dilakukan selama 128 epoch dengan batch size 16 dan memantau performa pada data uji, sementara hasil pelatihan disimpan dalam `history_gru` untuk dianalisis lebih lanjut.
 
-Menampilkan Plotting Loss and Validation Loss
-"""
-
-loss = history_gru.history['loss']
-val_loss = history_gru.history['val_loss']
-epochs = range(len(loss))
-
-plt.plot(epochs, loss, 'r', label='Training loss')
-plt.plot(epochs, val_loss, 'b', label='Validation loss')
-plt.title('Training and validation loss (GRU)')
-plt.legend()
-plt.show()
-
-"""Kode ini mengekstrak nilai loss (kerugian) dari proses training (loss) dan validasi (val_loss) yang tersimpan dalam objek history_gru, kemudian membuat visualisasi perbandingan keduanya menggunakan matplotlib dengan sumbu x menunjukkan jumlah epoch (iterasi training) dan sumbu y menunjukkan nilai loss, dimana garis merah ('r') merepresentasikan training loss yang menunjukkan seberapa baik model belajar dari data latih, sementara garis biru ('b') menunjukkan validation loss yang mengindikasikan kemampuan generalisasi model pada data baru, dengan penambahan judul grafik ('Training and validation loss') dan legend untuk memudahkan interpretasi, sehingga kita bisa mengevaluasi apakah model mengalami underfitting/overfitting.
-<br>
-
-Berdasarkan pola kedua kurva tersebut dan menentukan titik optimal dimana validasi loss mulai menurun (indikasi goodfit) dengan training loss terus menurun.
-
 Melakukan prediksi dan Denormalisasi
 """
 
@@ -780,6 +689,29 @@ original_ytest_gru = scaler.inverse_transform(y_test_gru.reshape(-1,1))
 # E. Evaluasi Model
 
 ## 1. Evaluasi Model LSTM
+
+Menampilkan Plotting Loss dan Validasi Loss model LSTM:
+"""
+
+loss = history_lstm.history['loss']
+val_loss = history_lstm.history['val_loss']
+
+epochs = range(len(loss))
+
+plt.plot(epochs, loss, 'r', label='Training loss')
+plt.plot(epochs, val_loss, 'b', label='Validation loss')
+plt.title('Training and validation loss')
+plt.legend(loc=0)
+plt.figure()
+
+plt.show()
+
+"""Kode ini mengekstrak nilai loss (kerugian) dari proses training (loss) dan validasi (val_loss) yang tersimpan dalam objek history_lstm, kemudian membuat visualisasi perbandingan keduanya menggunakan matplotlib dengan sumbu x menunjukkan jumlah epoch (iterasi training) dan sumbu y menunjukkan nilai loss, dimana garis merah ('r') merepresentasikan training loss yang menunjukkan seberapa baik model belajar dari data latih, sementara garis biru ('b') menunjukkan validation loss yang mengindikasikan kemampuan generalisasi model pada data baru, dengan penambahan judul grafik ('Training and validation loss') dan legend untuk memudahkan interpretasi, sehingga kita bisa mengevaluasi apakah model mengalami underfitting/overfitting.
+<br>
+
+Berdasarkan pola kedua kurva tersebut dan menentukan titik optimal dimana validasi loss mulai menurun (indikasi goodfit) dengan training loss terus menurun.
+
+Evaluasi menggunakan matriks evaluasi pada model LSTM:
 """
 
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
@@ -816,7 +748,31 @@ print(f"MAE: {mae_test_lstm:.2f}")
 print(f"MAPE: {mape_test_lstm:.2f}%")
 print(f"R-squared: {r2_test_lstm:.2f}")
 
-"""## 2. Evaluasi Model CNN 1D"""
+"""## 2. Evaluasi Model CNN 1D
+
+Menampilkan Plotting Loss dan Validasi Loss model CNN 1D:
+"""
+
+loss = history_cnn.history['loss']
+val_loss = history_cnn.history['val_loss']
+
+epochs = range(len(loss))
+
+plt.plot(epochs, loss, 'r', label='Training loss')
+plt.plot(epochs, val_loss, 'b', label='Validation loss')
+plt.title('Training and validation loss')
+plt.legend(loc=0)
+plt.figure()
+
+plt.show()
+
+"""Kode ini mengekstrak nilai loss (kerugian) dari proses training (loss) dan validasi (val_loss) yang tersimpan dalam objek history_cnn, kemudian membuat visualisasi perbandingan keduanya menggunakan matplotlib dengan sumbu x menunjukkan jumlah epoch (iterasi training) dan sumbu y menunjukkan nilai loss, dimana garis merah ('r') merepresentasikan training loss yang menunjukkan seberapa baik model belajar dari data latih, sementara garis biru ('b') menunjukkan validation loss yang mengindikasikan kemampuan generalisasi model pada data baru, dengan penambahan judul grafik ('Training and validation loss') dan legend untuk memudahkan interpretasi, sehingga kita bisa mengevaluasi apakah model mengalami underfitting/overfitting.
+<br>
+
+Berdasarkan pola kedua kurva tersebut dan menentukan titik optimal dimana validasi loss mulai menurun (indikasi goodfit) dengan training loss terus menurun.
+
+Evaluasi menggunakan matriks evaluasi pada model CNN 1D:
+"""
 
 def mean_absolute_percentage_error_cnn(y_true_cnn, y_pred_cnn):
     y_true_cnn, y_pred_cnn = np.array(y_true_cnn), np.array(y_pred_cnn)
@@ -850,7 +806,28 @@ print(f"MAE: {mae_test_cnn:.4f}")
 print(f"MAPE: {mape_test_cnn:.2f}%")
 print(f"R-squared: {r2_test_cnn:.4f}")
 
-"""## 3. Evaluasi Model GRU"""
+"""## 3. Evaluasi Model GRU
+
+Menampilkan Plotting Loss and Validation Loss model GRU:
+"""
+
+loss = history_gru.history['loss']
+val_loss = history_gru.history['val_loss']
+epochs = range(len(loss))
+
+plt.plot(epochs, loss, 'r', label='Training loss')
+plt.plot(epochs, val_loss, 'b', label='Validation loss')
+plt.title('Training and validation loss (GRU)')
+plt.legend()
+plt.show()
+
+"""Kode ini mengekstrak nilai loss (kerugian) dari proses training (loss) dan validasi (val_loss) yang tersimpan dalam objek history_gru, kemudian membuat visualisasi perbandingan keduanya menggunakan matplotlib dengan sumbu x menunjukkan jumlah epoch (iterasi training) dan sumbu y menunjukkan nilai loss, dimana garis merah ('r') merepresentasikan training loss yang menunjukkan seberapa baik model belajar dari data latih, sementara garis biru ('b') menunjukkan validation loss yang mengindikasikan kemampuan generalisasi model pada data baru, dengan penambahan judul grafik ('Training and validation loss') dan legend untuk memudahkan interpretasi, sehingga kita bisa mengevaluasi apakah model mengalami underfitting/overfitting.
+<br>
+
+Berdasarkan pola kedua kurva tersebut dan menentukan titik optimal dimana validasi loss mulai menurun (indikasi goodfit) dengan training loss terus menurun.
+
+Evaluasi menggunakan matriks evaluasi pada model GRU:
+"""
 
 def mean_absolute_percentage_error_gru(y_true_gru, y_pred_gru):
     y_true_gru, y_pred_gru = np.array(y_true_gru), np.array(y_pred_gru)
