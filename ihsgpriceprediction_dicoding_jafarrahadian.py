@@ -394,7 +394,10 @@ columns_to_check = ['Open', 'High', 'Low', 'Close', 'Volume']
 for col in columns_to_check:
     maindf_cleaned = handle_outliers(maindf_cleaned, col)
 
-"""Memeriksa null dan outliers menggunakan plot setelah proses Cleansing"""
+"""Fungsi **handle_outliers(df, column)** dirancang untuk mendeteksi dan menangani outliers pada kolom tertentu dalam DataFrame menggunakan metode IQR (Interquartile Range), di mana pertama-tama dihitung kuartil bawah (Q1) dan kuartil atas (Q3) untuk menentukan batas bawah (lower_bound = Q1 - 1.5 * IQR) dan batas atas (upper_bound = Q3 + 1.5 * IQR), kemudian mengidentifikasi outliers sebagai nilai yang berada di luar rentang ini. Setelah menampilkan jumlah outliers yang ditemukan, fungsi ini menerapkan teknik winsorizing dengan mengganti nilai outliers yang terdeteksi menggunakan metode clip() untuk membatasi nilai-nilai ekstrem tersebut agar tidak melebihi batas IQR yang telah ditentukan, sehingga distribusi data menjadi lebih stabil tanpa menghilangkan seluruh baris yang mengandung outliers. Contoh penggunaan fungsi ini dilakukan secara iteratif pada kolom-kolom penting seperti 'Open', 'High', 'Low', 'Close', dan 'Volume' dari DataFrame maindf_cleaned yang sebelumnya telah dibersihkan dari missing values, sehingga menghasilkan data yang lebih konsisten dan siap untuk analisis lebih lanjut seperti pemodelan statistik atau visualisasi tanpa distorsi oleh nilai-nilai ekstrem. Outliers ditemukan pada Feature volume dan segera dibersihkan.
+
+Memeriksa null dan outliers menggunakan plot setelah proses Cleansing
+"""
 
 print("\nNull value counts after Cleansing:")
 print(maindf_cleaned.isnull().sum())
