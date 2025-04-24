@@ -19,7 +19,6 @@ Daftar Pustaka: <br>
 
 ## **Business Understanding**
 
-
 ### **Problem Statements**:
 - Pada saat ini jenis investasi banyak ragamnya salah satunya yaitu dibidang Saham, salah satu jenis saham yang sedang viral di indonesia saat ini ada IHSG karena terjadi penurunan terus menerus dan IHSG (^JKSE) juga memiliki tingkat volatilitas yang tinggi, sehingga menyulitkan investor dan analis dalam memprediksi harga penutupan secara akurat, yang berdampak pada pengambilan keputusan investasi.
 - Di tengah tingginya volatilitas pasar saham, khususnya IHSG, kebutuhan akan sistem prediksi harga yang akurat menjadi semakin mendesak bagi pelaku industri keuangan dan investor untuk mengambil keputusan yang tepat dan mengurangi risiko kerugian. Namun, masih sangat minim riset yang secara spesifik membandingkan efektivitas berbagai pendekatan Machine Learning, terutama model deep learning seperti LSTM, CNN, dan GRU, dalam konteks prediksi harga penutupan IHSG. Ketiadaan referensi yang kuat dan teruji di lapangan menyebabkan banyak perusahaan dan institusi keuangan belum dapat memanfaatkan potensi teknologi ini secara optimal untuk mendukung strategi investasi dan pengelolaan portofolio.
@@ -87,32 +86,32 @@ maka hasilnya:
   |   3  | 1990-04-11 |  634.668274 |  634.668274 |  634.668274 |  634.668274 |         0 |
   |   4  | 1990-04-12 |  639.589111 |  639.589111 |  639.589111 |  639.589111 |         0 |
   |  ... |        ... |         ... |         ... |         ... |         ... |       ... |
-  | 8530 | 2025-04-14 | 6225.336914 | 6404.069824 | 6225.336914 | 6368.517090 | 149701700 |
-  | 8531 | 2025-04-15 | 6444.341797 | 6497.532227 | 6395.926758 | 6441.683105 | 147079600 |
-  | 8532 | 2025-04-16 | 6461.273926 | 6469.597168 | 6373.790039 | 6400.054199 | 142022700 |
   | 8533 | 2025-04-17 | 6407.020996 | 6438.269043 | 6384.285156 | 6438.269043 | 131124200 |
-  | 8534 | 2025-04-21 | 6450.313965 | 6472.538086 | 6410.488770 | 6449.289062 |         0 |
+  | 8534 | 2025-04-21 | 6450.313965 | 6472.538086 | 6406.803223 | 6445.966797 | 108855100 |
+  | 8535 | 2025-04-22 | 6455.079102 | 6538.321777 | 6428.104980 | 6538.266113 | 150312500 |
+  | 8536 | 2025-04-23 | 6589.327148 | 6642.915039 | 6588.256836 | 6634.376953 | 184488000 |
+  | 8537 | 2025-04-24 | 6671.067871 | 6697.900879 | 6585.456055 | 6613.478027 |         0 |
 
-  8534 rows × 6 columns
+  8538 rows × 6 columns
 
-Data terlama ada pada tanggal 6 april 1990 dan data terbaru ada pada tanggal 21 april 2025 dimana program ini sedang dijalankan.
+Data terlama ada pada tanggal 6 april 1990 dan data terbaru ada pada tanggal 24 april 2025 dimana program ini sedang dijalankan.
 
 - Menampilkan informasi tipe data<br>
 dengan menggunakan perintah `maindf_info()` hasil dari tipe data pada dataset adalah sebagai berikut:
   ```
   <class 'pandas.core.frame.DataFrame'>
-  RangeIndex: 8535 entries, 0 to 8534
+  RangeIndex: 8538 entries, 0 to 8537
   Data columns (total 6 columns):
    #   Column  Non-Null Count  Dtype  
   ---  ------  --------------  -----  
-   0   date    8535 non-null   object 
-   1   Open    8535 non-null   float64
-   2   High    8535 non-null   float64
-   3   Low     8535 non-null   float64
-   4   Close   8535 non-null   float64
-   5   Volume  8535 non-null   int64  
+   0   date    8538 non-null   object 
+   1   Open    8538 non-null   float64
+   2   High    8538 non-null   float64
+   3   Low     8538 non-null   float64
+   4   Close   8538 non-null   float64
+   5   Volume  8538 non-null   int64  
   dtypes: float64(4), int64(1), object(1)
-  memory usage: 400.2+ KB
+  memory usage: 400.3+ KB
   ```
 Penjelasannya adalah sebagai berikut:<br>
   -- Terdapat 1 kolom dengan tipe object, yaitu: date. Kolom ini merupakan categorical features (fitur non-numerik).<br>
@@ -121,15 +120,15 @@ Penjelasannya adalah sebagai berikut:<br>
   
 - Menampilkan statistik deskriptif<br>
 
-  |       |        Open |        High |         Low |       Close |       Volume |   
+  |       |        Open |        High |         Low |       Close |       Volume |
   |------:|------------:|------------:|------------:|------------:|-------------:|
-  | count | 8535.000000 | 8535.000000 | 8535.000000 | 8535.000000 | 8.535000e+03 |  
-  |  mean | 2814.285984 | 2829.873789 | 2796.542485 | 2814.085251 | 5.118739e+07 |  
-  |  std  | 2474.594154 | 2486.571812 | 2460.743026 | 2473.515154 | 2.048066e+08 |  
-  |  min  |  223.240311 |  223.240311 |  223.240311 |  223.240311 | 0.000000e+00 |  
-  |  25%  |  504.601834 |  507.750229 |  500.262051 |  504.475342 | 2.724100e+06 |   
-  |  50%  | 1781.983572 | 1792.152300 | 1770.499101 | 1783.909546 | 2.085050e+07 |   
-  |  75%  | 5138.040906 | 5164.886486 | 5115.274943 | 5140.824951 | 5.377760e+07 |  
+  | count | 8538.000000 | 8538.000000 | 8538.000000 | 8538.000000 | 8.538000e+03 |
+  |  mean | 2815.606271 | 2831.207769 | 2797.855263 | 2815.413494 | 5.122137e+07 |
+  |  std  | 2475.162009 | 2487.153272 | 2461.307385 | 2474.095334 | 2.047795e+08 |
+  |  min  |  223.240311 |  223.240311 |  223.240311 |  223.240311 | 0.000000e+00 |
+  |  25%  |  504.756587 |  507.769979 |  500.358530 |  504.488350 | 2.727875e+06 |
+  |  50%  | 1783.673543 | 1794.278099 | 1770.574081 | 1784.646057 | 2.087685e+07 |
+  |  75%  | 5139.551470 | 5165.338076 | 5119.448730 | 5141.749268 | 5.383542e+07 |
   |  max  | 7904.395020 | 7910.556152 | 7853.353027 | 7905.390137 | 9.788202e+09 |   
 
 Terdiri dari count, mean, std, min, 25%, 50%, 75%, dan max. Penjelasannya adalah sebagai berikut:<br>
@@ -146,7 +145,53 @@ Kegunaan:<br>
 
 (Kolom non-numerik seperti date otomatis diabaikan.)
 
-#### **Penanganan Missing Values & Outliers**
+#### **Univariate Analysis**
+
+- Visualisasi boxplot untuk melihat outliers dalam data
+  ![image](https://github.com/user-attachments/assets/5cfc6d95-90c7-4341-98cf-2819e7b3cbe4)
+
+  Boxplot diatas hanya berfungsi untuk menampilkan apakah ada **OUTLIERS** pada data **TANPA PENGAMBILAN KEPUTUSAN APAPUN**, untuk data cleansing akan dilakukan pada tahapan **DATA PREPARATION**.
+
+  Outlier sendiri adalah observasi yang terletak pada jarak abnormal dari nilai lain dalam sampel acak dari suatu populasi dalam data.
+
+  Dapat dilihat pada boxplot diatas bahwa hanya pada feature volume terjadinya peristiwa outliers sedangkan pada feature lain aman tanpa terjadinya outliers.
+
+- Distribusi fitur harga menggunakan histogram<br>
+  ![image](https://github.com/user-attachments/assets/65ee7bcf-0666-4b2e-843a-75930113ecb8)
+
+
+    Terlihat pada gambar diatas bahwa distribusi data pada keseluruhan(5) Feature terdapat perbedaan. Untuk open, high, low, close memiliki rentang nilai yang sama sedangkan volume memiliki nilai distribusi yang berbeda sendiri.<br>
+    **KEPUTUSAN UNTUK DROP FEATURE VOLUME AKAN DILAKUKAN PADA PROSES-PROSES SETELAHNYA**
+
+- Visualisasikan distribusi harga menggunakan Density Plot<br>
+  ![image](https://github.com/user-attachments/assets/96a10b52-980d-41b0-bfed-0d30fa3664c9)
+
+
+    Sama seperti pada histogram, terlihat pada gambar diatas bahwa density data pada keseluruhan(ke-5) Feature terdapat perbedaan. Untuk open, high, low, close memiliki rentang nilai yang sama sedangkan volume memiliki nilai pola density yang berbeda sendiri.<br>
+    **KEPUTUSAN UNTUK DROP FEATURE VOLUME AKAN DILAKUKAN PADA PROSES-PROSES SETELAHNYA**
+  
+- Visualisasi Time Series pada Close Price<br>
+  ![image](https://github.com/user-attachments/assets/cb819fd8-9395-4a95-9b07-9c42296e9848)
+
+
+    Gambar diatas adalah bentuk pola time series dari dataset IHSG sejak 1990 hingga hari ini, dapat dilihat juga pola serta fluktiasinya yang cukup tinggi.
+
+#### **Multivariate Analysis**
+Melakukan Correlation Matrix dan Scatter Plots untuk memeriksa korelasi antar feature.<br>
+
+![image](https://github.com/user-attachments/assets/26aea0af-e310-422b-af56-bbedb43f13ed)
+<br>
+![image](https://github.com/user-attachments/assets/2c95fcc6-b47f-46e7-afee-2b1fc540f92c)
+
+
+Pada Correlation Matrix diatas terlihat sangat amat jelas bahwa feature close, low, high, dan open memiliki perbedaan yang hampir **TIDAK ADA** sedangkan volume yang berbeda sendiri dengan angka yang jauh berbeda. Hal ini membuktikan bahwa korelasi antara feature volume dengan feature lainnya berbeda sehingga dapat di buang (**DROP**) di proses-proses selanjutnya.
+Kesimpulan:
+- **Karena Volume tidak memiliki korelasi yang kuat dengan data lainnya maka tidak dipilih**. (DROP)
+- **Close yang akan dipilih karena dari keempat parameter lainnya hasilnya hampir sama**.
+
+## **Data Preparation**
+
+### **Penanganan Missing Values & Outliers**
 - penanganan Missing Values menggunakan Interpolasi<br>
   berdasarkan metode [ini](https://medium.com/@aseafaldean/time-series-data-interpolation-e4296664b86), berikut hasilnya:<br>
 
@@ -157,7 +202,8 @@ Berdasarkan penggunaan metode interpolasi dataset yang digunakan tidak menunjukk
 - Penanganan outliers menggunakan metode IQR<br>
 Ditemukan outliers pada feature volume, berikut adalah bukti pembersihan outliers pada feature volume:<br>
 
-  ![image](https://github.com/user-attachments/assets/5cd927d5-fd59-4ba1-b798-015ec657b3a6)
+  ![image](https://github.com/user-attachments/assets/4eefbbc5-4aa7-4b73-bb45-45467847bce5)
+
 
 - Visualisasi outliers menggunakan boxplot<br>
   -- boxplot keseluruhan feature: <br>
@@ -165,52 +211,6 @@ Ditemukan outliers pada feature volume, berikut adalah bukti pembersihan outlier
     <br>
     Seperti yang terlihat pada boxplot diatas **membuktikan** bahwasanya data pada seluruh(5) feature sudah bersih dan **TIDAK ADA OUTLIERS** karena sudah dilakukan proses pembersihan menggunakan IQR pada proses sebelumnya.
 
-#### **Univariate Analysis**
-- Distribusi fitur harga menggunakan histogram<br>
-![image](https://github.com/user-attachments/assets/ec87a196-408e-4ae6-933a-d1f811c78053)
-
-    Terlihat pada gambar diatas bahwa distribusi data pada keseluruhan(5) Feature terdapat perbedaan. Untuk open, high, low, close memiliki rentang nilai yang sama sedangkan volume memiliki nilai distribusi yang berbeda sendiri.<br>
-    **KEPUTUSAN UNTUK DROP FEATURE VOLUME AKAN DILAKUKAN PADA PROSES-PROSES SETELAHNYA**
-
-- Visualisasikan distribusi harga menggunakan Density Plot<br>
-![image](https://github.com/user-attachments/assets/aa6fe4ab-db61-4613-a6f7-129ead24ba85)
-
-    Sama seperti pada histogram, terlihat pada gambar diatas bahwa density data pada keseluruhan(ke-5) Feature terdapat perbedaan. Untuk open, high, low, close memiliki rentang nilai yang sama sedangkan volume memiliki nilai pola density yang berbeda sendiri.<br>
-    **KEPUTUSAN UNTUK DROP FEATURE VOLUME AKAN DILAKUKAN PADA PROSES-PROSES SETELAHNYA**
-  
-- Visualisasi Time Series pada Close Price<br>
-![image](https://github.com/user-attachments/assets/66e84a9a-b70f-4135-b7d6-74802a04988f)
-
-    Gambar diatas adalah bentuk pola time series dari dataset IHSG sejak 1990 hingga hari ini, dapat dilihat juga pola serta fluktiasinya yang cukup tinggi.
-  
-- Deskripsi data yang sudah bersih<br>
-
-  |       |        Open |        High |         Low |       Close |       Volume |
-  |------:|------------:|------------:|------------:|------------:|-------------:|
-  | count | 8535.000000 | 8535.000000 | 8535.000000 | 8535.000000 | 8.535000e+03 |
-  |  mean | 2814.285984 | 2829.873789 | 2796.542485 | 2814.085251 | 3.796068e+07 |
-  |  std  | 2474.594154 | 2486.571812 | 2460.743026 | 2473.515154 | 4.421105e+07 |
-  |  min  |  223.240311 |  223.240311 |  223.240311 |  223.240311 | 0.000000e+00 |
-  |  25%  |  504.601834 |  507.750229 |  500.262051 |  504.475342 | 2.724100e+06 |
-  |  50%  | 1781.983572 | 1792.152300 | 1770.499101 | 1783.909546 | 2.085050e+07 |
-  |  75%  | 5138.040906 | 5164.886486 | 5115.274943 | 5140.824951 | 5.377760e+07 |
-  |  max  | 7904.395020 | 7910.556152 | 7853.353027 | 7905.390137 | 1.303578e+08 |
-
-    Statistik Deskriptif diatas pada dasarnya sama seperti Statistik Deskriptif pada tahap **EDA - Deskripsi Variabel**, akan tetapi jumlah angkanya akan sedikit berubah karena sudah dilakukan proses penghilangan missing value dan penghilangan outliers.
-
-#### **Multivariate Analysis**
-Melakukan Correlation Matrix dan Scatter Plots untuk memeriksa korelasi antar feature.<br>
-
-![image](https://github.com/user-attachments/assets/6404f053-7f5a-45f6-b6ed-60fc1ef9049d) <br>
-
-![image](https://github.com/user-attachments/assets/28f5431d-f933-4443-b2d6-5c8d4c778b4d)
-
-Pada Correlation Matrix diatas terlihat sangat amat jelas bahwa feature close, low, high, dan open memiliki perbedaan yang hampir **TIDAK ADA** sedangkan volume yang berbeda sendiri dengan angka yang jauh berbeda. Hal ini membuktikan bahwa korelasi antara feature volume dengan feature lainnya berbeda sehingga dapat di buang (**DROP**) di proses-proses selanjutnya.
-Kesimpulan:
-- **Karena Volume tidak memiliki korelasi yang kuat dengan data lainnya maka tidak dipilih**. (DROP)
-- **Close yang akan dipilih karena dari keempat parameter lainnya hasilnya hampir sama**.
-
-## **Data Preparation**
 ### **Encoding Feature**
 Encoding Feature dilakukan dengan memilah Feature mana yang akan dipilih untuk dijadikan data training dan data testing, pada studi kasus kali ini Feature yang akan dipilih adalah **close** yang merupakan harga penutupan saham. Dipilihnya Feature **close** karena berdasarkan Correlation Matrix dan Scatter Plots feature **close** memiliki persamaan dengan 3 Feature numerik lainnya, sementara itu feature **date** akan dijadikan acuan tanggal dan feature **volume** akan dibuang(drop). Berikut hasilnya:<br>
 
@@ -222,29 +222,29 @@ Encoding Feature dilakukan dengan memilah Feature mana yang akan dipilih untuk d
   |   3  | 1990-04-11 |  634.668274 |
   |   4  | 1990-04-12 |  639.589111 |
   |  ... |        ... |         ... |
-  | 8530 | 2025-04-14 | 6368.517090 |
-  | 8531 | 2025-04-15 | 6441.683105 |
-  | 8532 | 2025-04-16 | 6400.054199 |
   | 8533 | 2025-04-17 | 6438.269043 |
-  | 8534 | 2025-04-21 | 6449.289062 |
+  | 8534 | 2025-04-21 | 6445.966797 |
+  | 8535 | 2025-04-22 | 6538.266113 |
+  | 8536 | 2025-04-23 | 6634.376953 |
+  | 8537 | 2025-04-24 | 6613.478027 |
 
-  8535 rows × 2 columns
+  8538 rows × 2 columns
 
 setelah itu untuk meringankan kerja model, akan dipilih 1000 data terbaru yang akan dijadikan untuk data testing dan data training, berikut adalah hasilnya:<br>
 
   |      |       date |       Close |
   |-----:|-----------:|------------:|
-  | 7535 | 2021-02-24 | 6251.054199 |
-  | 7536 | 2021-02-25 | 6289.645996 |
-  | 7537 | 2021-02-26 | 6241.795898 |
   | 7538 | 2021-03-01 | 6338.513184 |
   | 7539 | 2021-03-02 | 6359.205078 |
+  | 7540 | 2021-03-03 | 6376.756836 |
+  | 7541 | 2021-03-04 | 6290.798828 |
+  | 7542 | 2021-03-05 | 6258.749023 |
   |  ... |        ... |         ... |
-  | 8530 | 2025-04-14 | 6368.517090 |
-  | 8531 | 2025-04-15 | 6441.683105 |
-  | 8532 | 2025-04-16 | 6400.054199 |
   | 8533 | 2025-04-17 | 6438.269043 |
-  | 8534 | 2025-04-21 | 6449.289062 |
+  | 8534 | 2025-04-21 | 6445.966797 |
+  | 8535 | 2025-04-22 | 6538.266113 |
+  | 8536 | 2025-04-23 | 6634.376953 |
+  | 8537 | 2025-04-24 | 6613.478027 |
 
   1000 rows × 2 columns
 
@@ -266,39 +266,39 @@ Scaled Testing data shape: (200, 1)
 
 #### Standarisasi data Training: 
 
-|      |    Close |
-|-----:|---------:|
-| 7535 | 0.293215 |
-| 7536 | 0.316286 |
-| 7537 | 0.287680 |
-| 7538 | 0.345500 |
-| 7539 | 0.357871 |
-|  ... |      ... |
-| 8330 | 0.651338 |
-| 8331 | 0.640258 |
-| 8332 | 0.582430 |
-| 8333 | 0.577699 |
-| 8334 | 0.632939 |
+  |      |    Close |
+  |-----:|---------:|
+  | 7538 | 0.345500 |
+  | 7539 | 0.357871 |
+  | 7540 | 0.368363 |
+  | 7541 | 0.316976 |
+  | 7542 | 0.297815 |
+  |  ... |      ... |
+  | 8333 | 0.577699 |
+  | 8334 | 0.632939 |
+  | 8335 | 0.669201 |
+  | 8336 | 0.674694 |
+  | 8337 | 0.670831 |
 
-800 rows × 1 columns
+  800 rows × 1 columns
 
 #### Standarisasi data Testing:
 
-|      |    Close |
-|-----:|---------:|
-| 8335 | 0.669201 |
-| 8336 | 0.674694 |
-| 8337 | 0.670831 |
-| 8338 | 0.684544 |
-| 8339 | 0.721794 |
-|  ... |      ... |
-| 8530 | 0.363437 |
-| 8531 | 0.407178 |
-| 8532 | 0.382291 |
-| 8533 | 0.405137 |
-| 8534 | 0.411725 |
+  |      |    Close |
+  |-----:|---------:|
+  | 8338 | 0.684544 |
+  | 8339 | 0.721794 |
+  | 8340 | 0.778962 |
+  | 8341 | 0.824425 |
+  | 8342 | 0.815767 |
+  |  ... |      ... |
+  | 8533 | 0.405137 |
+  | 8534 | 0.409739 |
+  | 8535 | 0.464918 |
+  | 8536 | 0.522375 |
+  | 8537 | 0.509881 |
 
-200 rows × 1 columns
+  200 rows × 1 columns
 
 ## **Modeling**
 
@@ -338,11 +338,8 @@ Berikut adalah Hyperparameter yang di atur sedemikian rupa agar model mendapatka
 - Epochs: `128`  
 - Batch Size: `16`
 
-#### Plotting Loss dan Validasi Loss
-![image](https://github.com/user-attachments/assets/33ef1a94-7ff1-4247-86c3-ceb1640b815b)
-
 #### Kesimpulan
-Berdasarkan Plotting Loss & Val_loss dapat diketahui bahwa algoritma LSTM mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
+Berdasarkan history training model, algoritma LSTM mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
 
 Jika sudah maka data dapat diubah kembali ke bentuk awal menggunakan proses denormalisasi dengan inverse Min-Max Scaler.
 
@@ -387,12 +384,8 @@ Berikut adalah Hyperparameter yang di atur sedemikian rupa agar model mendapatka
 - Epochs: `128`  
 - Batch Size: `32`
 
-#### Plotting Loss dan Validasi Loss
-![image](https://github.com/user-attachments/assets/1e204541-1589-42c3-a2cd-6cb8c5db513f)
-
-
 #### Kesimpulan
-Berdasarkan Plotting Loss & Val_loss dapat diketahui bahwa algoritma CNN mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
+Berdasarkan history training model, dapat diketahui bahwa algoritma CNN mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
 
 Jika sudah maka data dapat diubah kembali ke bentuk awal menggunakan proses denormalisasi dengan inverse Min-Max Scaler.
 
@@ -430,12 +423,8 @@ history_gru = model_gru.fit(X_train_gru, y_train_gru, epochs=128, batch_size=16,
 - Epochs: `128`  
 - Batch Size: `16`
 
-#### Plotting Loss dan Validasi Loss
-![image](https://github.com/user-attachments/assets/f6e4e4e2-a74a-4931-9aa5-a504fe1f71cb)
-
-
 #### Kesimpulan
-Berdasarkan Plotting Loss & Val_loss dapat diketahui bahwa algoritma GRU mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
+Berdasarkan history training model, dapat diketahui bahwa algoritma GRU mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil Matriks Evaluasi model akan dilakukan pada step Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**.<br>
 
 Jika sudah maka data dapat diubah kembali ke bentuk awal menggunakan proses denormalisasi dengan inverse Min-Max Scaler.
 
@@ -477,63 +466,78 @@ $$ \large R^2 = 1- \dfrac{SS_{RES}}{SS_{TOT}} = 1 - \dfrac{\sum_i(y_i - \hat y_i
 Setelah mengetahui penjelasan dari masing-masing Matriks Evaluasi, selanjutnya adalah hasil evaluasi dari masing-masing model:<br>
 
 ### LSTM
+#### Plotting Loss dan Validasi Loss model LSTM:
+![image](https://github.com/user-attachments/assets/33ef1a94-7ff1-4247-86c3-ceb1640b815b)<br>
+Berdasarkan pola kedua kurva tersebut dan menentukan titik optimal dimana validasi loss mulai menurun (indikasi [goodfit](https://www.dicoding.com/blog/overfitting-vs-underfitting-apa-bedanya/)) dengan training loss terus menurun.
+
+#### Hasil Matriks Evaluasi model LSTM:
 ```
 Training Data Metrics LSTM:
-MSE: 2492.08
-RMSE: 49.92
-MAE: 38.85
+MSE: 2506.15
+RMSE: 50.06
+MAE: 38.88
 MAPE: 0.57%
 R-squared: 0.98
 
 Testing Data Metrics LSTM:
-MSE: 7978.20
-RMSE: 89.32
-MAE: 66.26
-MAPE: 0.95%
+MSE: 8201.13
+RMSE: 90.56
+MAE: 68.22
+MAPE: 0.98%
 R-squared: 0.96
 ```
 
 ### CNN
+#### Plotting Loss dan Validasi Loss model CNN:
+![image](https://github.com/user-attachments/assets/0b602c74-f2e4-4f35-b635-0fb46f15cc76)<br>
+Berdasarkan pola kedua kurva tersebut dan menentukan titik optimal dimana validasi loss mulai menurun (indikasi [goodfit](https://www.dicoding.com/blog/overfitting-vs-underfitting-apa-bedanya/)) dengan training loss terus menurun.
+
+#### Hasil Matriks Evaluasi model CNN:
 ```
 Training Data Metrics CNN:
-MSE: 3126.6025
-RMSE: 55.9160
-MAE: 43.6916
-MAPE: 0.64%
-R-squared: 0.9791
+MSE: 2665.5495
+RMSE: 51.6290
+MAE: 38.9811
+MAPE: 0.58%
+R-squared: 0.9821
 
 Testing Data Metrics CNN:
-MSE: 11399.8232
-RMSE: 106.7700
-MAE: 83.3281
-MAPE: 1.18%
-R-squared: 0.9408
+MSE: 10282.0030
+RMSE: 101.4002
+MAE: 74.7207
+MAPE: 1.07%
+R-squared: 0.9483
 ```
 
 ### GRU
+#### Plotting Loss dan Validasi Loss model GRU:
+![image](https://github.com/user-attachments/assets/75cb051f-066a-4b91-b481-c94e79d6025c)<br>
+Berdasarkan pola kedua kurva tersebut dan menentukan titik optimal dimana validasi loss mulai menurun (indikasi [goodfit](https://www.dicoding.com/blog/overfitting-vs-underfitting-apa-bedanya/)) dengan training loss terus menurun.
+
+#### Hasil Matriks Evaluasi model GRU:
 ```
 Training Data Metrics GRU:
-MSE: 2513.77
-RMSE: 50.14
-MAE: 38.85
-MAPE: 0.57%
+MSE: 2945.94
+RMSE: 54.28
+MAE: 42.82
+MAPE: 0.63%
 R-squared: 0.98
 
 Testing Data Metrics GRU:
-MSE: 8588.93
-RMSE: 92.68
-MAE: 70.07
-MAPE: 1.00%
-R-squared: 0.96
+MSE: 11011.92
+RMSE: 104.94
+MAE: 83.44
+MAPE: 1.18%
+R-squared: 0.94
 ```
 
 **KESIMPULAN**:
 
 |   | Model |   MSE_Train | RMSE_Train | MAE_Train | MAPE_Train | R2_Train |     MSE_Test |  RMSE_Test |  MAE_Test | MAPE_Test |  R2_Test |
 |--:|------:|------------:|-----------:|----------:|-----------:|---------:|-------------:|-----------:|----------:|----------:|---------:|
-| 0 |  LSTM | 2492.075914 |  49.920696 | 38.845927 |   0.574054 | 0.983346 |  7978.197943 |  89.320759 | 66.263884 |  0.948856 | 0.958567 |
-| 2 |   GRU | 2513.770906 |  50.137520 | 38.854945 |   0.574631 | 0.983201 |  8588.933387 |  92.676499 | 70.069656 |  0.999125 | 0.955395 |
-| 1 |   CNN | 3126.602476 |  55.916031 | 43.691587 |   0.643636 | 0.979105 | 11399.823241 | 106.769955 | 83.328097 |  1.183736 | 0.940797 |
+| 0 |  LSTM | 2506.152450 |  50.061487 | 38.880598 |   0.574729 | 0.983165 |  8201.131900 |  90.560101 | 68.222057 |  0.978184 | 0.958765 |
+| 1 |   CNN | 2665.549489 |  51.628960 | 38.981074 |   0.577532 | 0.982094 | 10282.002998 | 101.400212 | 74.720732 |  1.070848 | 0.948302 |
+| 2 |   GRU | 2945.942454 |  54.276537 | 42.820113 |   0.631529 | 0.980210 | 11011.920218 | 104.937697 | 83.443109 |  1.176651 | 0.944632 |
 
 **Berdasarkan Hasil Evaluasi Model, LSTM merupakan Model Terbaik untuk studi kasus Time Series univariate.**
 
@@ -551,10 +555,9 @@ Maka dari itu Model **LSTM** yang akan dipilih untuk dijadikan implementasi.
 ![image](https://github.com/user-attachments/assets/19018356-aecb-4f2f-828c-cccc7d14cc2a)
 
 ### Data Sebelum dan Sesudah Prediksi
-![hehe](https://github.com/user-attachments/assets/68d8fc83-1545-417e-bef9-0e0da0542e79)
-
+![hehe](https://github.com/user-attachments/assets/532725f9-6430-499d-8a32-029b1f42dfe5)
 
 ### Contoh penggunaan untuk prediksi 7 hari kedepan
-![image](https://github.com/user-attachments/assets/5a6653d4-8df4-4d2e-8416-f56ca1746176)
+![image](https://github.com/user-attachments/assets/3f9e2ffb-69fe-4a65-b64a-19042e2fe979)
 
-
+--------------------------------------------------------
