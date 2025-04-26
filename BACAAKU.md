@@ -251,6 +251,8 @@ Berikut adalah kekurangan dan kelebihan model LSTM:
   -- Forget gate membantu menghindari noise dalam data saham yang fluktuatif.<br>
   -- Dirancang khusus untuk data deret waktu, sehingga cocok untuk prediksi harga saham.<br>
 
+Kesimpulannya adalah ...
+
 ### **CNN 1D (Convolutional Neural Network 1 Dimensi)**
 Model GRU (Gated Recurrent Unit) adalah varian yang lebih sederhana dari LSTM dengan hanya dua gerbang (update dan reset), yang menggabungkan fungsi input dan forget gate menjadi satu, tetap mampu menangkap pola temporal tetapi dengan komputasi lebih efisien, cocok untuk mengenali pola pergerakan harga harian tanpa redundansi.<br>
 
@@ -273,7 +275,9 @@ Berikut adalah kekurangan dan kelebihan dari Model CNN 1D:
 - Kelebihan:<br>
   -- Komputasinya cepat karena paralelisasi lebih baik dibanding RNN (LSTM & GRU : Turunan RNN).<br>
   -- Arsitektur fleksibel sehingga dapat dikombinasikan dengan pooling layers untuk ekstraksi fitur hierarkis.<br>
-  
+
+Kesimpulannya adalah ...
+
 ### **GRU (Gated Recurrent Unit)**
 Model CNN 1D mengaplikasikan filter konvolusi pada data `close` untuk mendeteksi pola lokal (misalnya, kenaikan/penurunan 5 hari berturut-turut) melalui operasi sliding window, lalu hasil ekstraksi fiturnya digunakan untuk prediksi. Model CNN 1D lebih cepat tetapi terbatas pada pola jangka pendek.<br>
 
@@ -295,6 +299,8 @@ Berikut adalah kekurangan dan kelebihan dari Model GRU:
   -- Efisiensi Komputasi: Struktur lebih sederhana (2 gate vs 3 gate pada LSTM) sehingga pelatihan lebih cepat.<br>
   -- Kinerja pada Data Kecil: Lebih robust terhadap overfitting pada dataset terbatas.<br>
   -- Menangnai Pola Jangka Pendek: Efektif untuk prediksi harian/mingguan dengan fluktuasi cepat.<br>
+
+Kesimpulannya adalah ...
 
 ## **Evaluasi**
 ### **Penjelasan Matriks Evaluasi MSE**
