@@ -183,11 +183,11 @@ Berikut adalah beberapa tahapan yang dilakukan untuk merapihkan data agar data s
 - Missing Value<br>
   Dengan menggunakan metode [interpolasi](https://medium.com/@aseafaldean/time-series-data-interpolation-e4296664b86), tidak ditemukan adanya missing value pada dataset. Maka dari itu dapat langsung ke tahap data cleansing selanjutnya, **BUKTINYA DAPAT ANDA LIHAT PADA TAHAPAN "Kondisi Data (Missing Value, Duplikat, dan Outlier)"**
   
-- Outlier
+- Outlier<br>
   Dengan menggunakan metore [Interquartil Range (IQR)](https://www.stat.cmu.edu/~hseltman/309/Book/Book.pdf), outlier pada feature volume dapat diselesaikan (**ANDA DAPAT MELIHAT BUKTI FEATURE VOLUME TERDAPAT OUTLIER PADA TAHAP "Kondisi Data (Missing Value, Duplikat, dan Outlier)"**). Berikut setelah penanganannya:<br>
   ![image](https://github.com/user-attachments/assets/28742ecd-0135-4d6b-908a-1c00639d8ff2)
 
-- Duplikat
+- Duplikat<br>
   Berdasarkan pengecekan pada tahapan **Kondisi Data (Missing Value, Duplikat, dan Outlier)**, tidak ditemukannya ada data duplikat maka dari itu data yang sudah bersih (`maindf_cleaned`) dapat diproses pada tahapan selanjutnya.
   
 ### **Encoding Feature**
