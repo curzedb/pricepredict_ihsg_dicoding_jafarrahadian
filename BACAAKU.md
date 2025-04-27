@@ -233,6 +233,8 @@ Berikut adalah model yang saya gunakan beserta cara kerja dari model tersebut:
 ### **LSTM (Long Short Term Memory)**
 Model LSTM bekerja dengan cara memanfaatkan tiga gerbang (input, forget, dan output) untuk mengontrol aliran informasi dalam sel memornya, memungkinkannya mempelajari dependensi jangka panjang dalam data deret waktu seperti harga saham. Untuk memprediksi harga indeks ^JKSE (IHSG) menggunakan hanya data close, model bekerja dengan memproses data deret waktu secara berurutan. Dengan menggunakan mekanisme gerbang (input, forget, output) untuk memilih informasi mana yang disimpan atau dibuang, sehingga mampu mengingat pola jangka panjang seperti tren harian dalam pergerakan harga.<br>
 
+Dalam studi kasus ini model LSTM bekerja dengan memproses data deret waktu harga close ^JKSE secara berurutan menggunakan lapisan LSTM dengan `100 neuron` yang menerima input berbentuk `(None, 1)`, artinya dapat menerima sejumlah timestep (10 hari terakhir) dengan satu fitur (harga close) per timestep. Lapisan ini menggunakan `aktivasi ReLU` untuk menangkap pola non-linear, sementara gerbang input, forget, dan output pada LSTM memungkinkan model memilih informasi penting yang perlu disimpan atau dibuang sehingga dapat mengingat pola jangka panjang dalam data. Model kemudian memprediksi harga di timestep berikutnya melalui lapisan `Dense(1)` dengan `loss function MSE` dan `optimizer Adam` untuk meminimalkan error prediksi. Selama pelatihan, model belajar dari `data training (X_train_lstm, y_train_lstm)` dalam `128 epoch` dengan `batch size 16`, sementara performanya dimonitor menggunakan `data validasi (X_test_lstm, y_test_lstm)`.
+
 Berikut Hyperparameter yang digunakan pada model LSTM:
 - Neuron: `100`
 - Activation: `relu`
@@ -251,10 +253,12 @@ Berikut adalah kekurangan dan kelebihan model LSTM:
   -- Forget gate membantu menghindari noise dalam data saham yang fluktuatif.<br>
   -- Dirancang khusus untuk data deret waktu, sehingga cocok untuk prediksi harga saham.<br>
 
-Kesimpulannya adalah ...
+Kesimpulannya adalah algoritma LSTM mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil evaluasi model akan dilakukan pada tahap Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**. Langkah terakhir untuk tahapan modeling pada model LSTM adalah melakukan denormalisasi dengan inverse Min-Max Scaler agar data kembali ke bentuk asalnya.
 
 ### **CNN 1D (Convolutional Neural Network 1 Dimensi)**
-Model GRU (Gated Recurrent Unit) adalah varian yang lebih sederhana dari LSTM dengan hanya dua gerbang (update dan reset), yang menggabungkan fungsi input dan forget gate menjadi satu, tetap mampu menangkap pola temporal tetapi dengan komputasi lebih efisien, cocok untuk mengenali pola pergerakan harga harian tanpa redundansi.<br>
+Model CNN 1D mengaplikasikan filter konvolusi pada data `close` untuk mendeteksi pola lokal (misalnya, kenaikan/penurunan 5 hari berturut-turut) melalui operasi sliding window, lalu hasil ekstraksi fiturnya digunakan untuk prediksi. Model CNN 1D lebih cepat tetapi terbatas pada pola jangka pendek.<br>
+
+Dalam studi kasus ini model CNN 1D bekerja dengan menganalisis pola lokal pada data deret waktu harga close melalui beberapa tahap utama. Lapisan Conv1D dengan `64 filter` dan `kernel size 3` memindai data untuk mengekstraksi pola jangka pendek, diikuti `MaxPooling1D` yang mereduksi dimensi dengan mengambil nilai maksimum setiap 2 timestep untuk menekan noise. Hasilnya kemudian diratakan (Flatten) dan diolah oleh lapisan `Dense dengan 50 neuron` untuk mempelajari kombinasi pola, sebelum akhirnya lapisan output tunggal menghasilkan prediksi harga berikutnya. Model ini dioptimalkan menggunakan `loss function MSE dan optimizer Adam`, dengan pelatihan dilakukan selama `128 epoch` dalam `batch 32 sampel`, sembari memantau performa pada data validasi.
 
 Berikut Hyperparameter yang digunakan pada model CNN 1D:
 - Layer: `64`
@@ -276,10 +280,12 @@ Berikut adalah kekurangan dan kelebihan dari Model CNN 1D:
   -- Komputasinya cepat karena paralelisasi lebih baik dibanding RNN (LSTM & GRU : Turunan RNN).<br>
   -- Arsitektur fleksibel sehingga dapat dikombinasikan dengan pooling layers untuk ekstraksi fitur hierarkis.<br>
 
-Kesimpulannya adalah ...
+Kesimpulannya adalah  algoritma CNN mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil evaluasi model akan dilakukan pada tahap Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**. Langkah terakhir untuk tahapan modeling pada model CNN 1D adalah melakukan denormalisasi dengan inverse Min-Max Scaler agar data kembali ke bentuk asalnya.
 
 ### **GRU (Gated Recurrent Unit)**
-Model CNN 1D mengaplikasikan filter konvolusi pada data `close` untuk mendeteksi pola lokal (misalnya, kenaikan/penurunan 5 hari berturut-turut) melalui operasi sliding window, lalu hasil ekstraksi fiturnya digunakan untuk prediksi. Model CNN 1D lebih cepat tetapi terbatas pada pola jangka pendek.<br>
+Model GRU (Gated Recurrent Unit) adalah varian yang lebih sederhana dari LSTM dengan hanya dua gerbang (update dan reset), yang menggabungkan fungsi input dan forget gate menjadi satu, tetap mampu menangkap pola temporal tetapi dengan komputasi lebih efisien, cocok untuk mengenali pola pergerakan harga harian tanpa redundansi.<br>
+
+Dalam studi kasus ini model GRU bekerja dengan memproses data deret waktu harga close melalui lapisan GRU yang terdiri dari `100 unit`, di mana setiap unit menggunakan mekanisme reset gate dan update gate untuk secara selektif mengelola informasi temporal - reset gate menentukan informasi masa lalu yang perlu diabaikan, sementara update gate mengontrol seberapa banyak informasi baru yang akan disimpan dan informasi lama yang dipertahankan. Input berupa data berjendela diproses dengan `aktivasi ReLU` untuk menangkap pola non-linear, kemudian hasilnya diteruskan ke lapisan `Dense(1)` yang menghasilkan prediksi harga berikutnya. Model dikompilasi dengan `optimizer Adam` dan `loss function MSE` untuk meminimalkan error prediksi, lalu dilatih selama `128 epoch` dengan `batch size 16` sembari memantau performa pada data validasi.
 
 Berikut Hyperparameter yang digunakan pada model GRU:
 - Neuron: `100`
@@ -300,16 +306,52 @@ Berikut adalah kekurangan dan kelebihan dari Model GRU:
   -- Kinerja pada Data Kecil: Lebih robust terhadap overfitting pada dataset terbatas.<br>
   -- Menangnai Pola Jangka Pendek: Efektif untuk prediksi harian/mingguan dengan fluktuasi cepat.<br>
 
-Kesimpulannya adalah ...
+Kesimpulannya adalah algoritma GRU mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil matriks evaluasi model akan dilakukan pada tahap Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**. Langkah terakhir untuk tahapan modeling pada model GRU adalah melakukan denormalisasi dengan inverse Min-Max Scaler agar data kembali ke bentuk asalnya.
 
 ## **Evaluasi**
+Matriks Evaluasi yang digunakan pada proyek ini diantaranya ada MSE, RMSE, MAE, MAPE, & R2. Berikut adalah penjelasan dari setiap matriks evaluasi yang digunakan:<br>
+
 ### **Penjelasan Matriks Evaluasi MSE**
+MSE mengukur rata-rata kuadrat selisih antara nilai prediksi dan nilai aktual. Semakin tinggi nilai MSE maka semakin jauh prediksi model dari nilai aktual, yang berarti akurasi model menurun. Rumusnya: <br>
+
+$$
+\text{MSE} = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2
+$$
+
 ### **Penjelasan Matriks Evaluasi RMSE**
+Root Mean Square Error atau disingkat RMSE merupakan hasil dari penjumlahan kuadrat error(Mean Square Error), perbedaan antar nilai asli dengan nilai prediksi akan dibagi dengan hasil penjumlahan yang akan diperoleh dari waktu peramalan. Semakin nilai RMSE mendekati nol, maka semakin baik kualitas hasil prediksi data tersebut, RMSE dirumuskan dengan: <br>
+
+$$
+\text{RMSE} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}
+$$
+
 ### **Penjelasan Matriks Evaluasi MAE**
+MAE mengukur rata-rata absolut selisih antara nilai prediksi dan nilai aktual. Nilai MAE yang tinggi menunjukkan adanya deviasi absolut yang besar, sehingga akurasi model menurun. Rumusnya: <br>
+
+$$
+\text{MAE} = \frac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i|
+$$
+
 ### **Penjelasan Matriks Evaluasi MAPE**
+MAPE mengukur persentase kesalahan relatif terhadap nilai aktual. MAPE bernilai non‑negatif dan nilai terbaik adalah 0.0%, Semakin tinggi nilai MAPE, semakin besar persentase deviasi, yang berarti model kurang akurat. Rumusnya: <br>
+
+$$
+\text{MAPE} = \frac{100\%}{n}\sum_{i=1}^{n}\left|\frac{y_i - \hat{y}_i}{y_i}\right|
+$$
+
 ### **Penjelasan Matriks Evaluasi $R^2$**
+R-squared($R^2$) memiliki arti koefisien determinasi, merupakan ukuran uji statistik yang digunakan untuk menilai sejauh mana variabel yang tidak bergantung dalam model tersebut dapat menguraikan varian pada variabel independen. Nilai dari koefisien determinasi berada pada angka antara 0 dan 1, dimana jika nilai menunjukkan angka 1 atau semakin mendekati angka 1 maka hasil prediksi tersebut sepenuhnya cocok dengan data yang ada. Rumusnya: <br>
+
+$$ \large R^2 = 1- \dfrac{SS_{RES}}{SS_{TOT}} = 1 - \dfrac{\sum_i(y_i - \hat y_i)^2}{\sum_i(y_i - \overline y_i)^2} $$
+
+Setelah mengetahui penjelasan dari masing-masing Matriks Evaluasi, selanjutnya adalah hasil evaluasi dari masing-masing model:<br>
+
 ### **Evaluasi Model LSTM**
+
 ### **Evaluasi Model CNN 1D**
+
 ### **Evaluasi Model GRU**
+
 ### **Kesimpulan**
+
 ### **Percobaan Implementasi**
