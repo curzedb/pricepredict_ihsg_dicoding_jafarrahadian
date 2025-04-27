@@ -28,8 +28,8 @@ Daftar Pustaka: <br>
 - Memberikan insight kuantitatif dan visual terhadap kemampuan masing-masing model dalam menangkap pola harga historis IHSG (^JKSE) dan memprediksi harga di masa depan.
   
 ### **Solution statements**:
-- Mengimplementasikan dan melatih tiga model deep learning secara terpisah: LSTM, CNN, dan GRU menggunakan dataset historis harga penutupan IHSG (^JKSE).
 - Mengukur performa setiap model menggunakan metrik kuantitatif yang objektif seperti Mean Squared Error (MSE), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), Mean absolute percentage error (MAPE), dan R-Squared ($R^2$).
+- Mengimplementasikan dengan melatih tiga model deep learning secara terpisah: LSTM, CNN, dan GRU menggunakan dataset historis harga penutupan IHSG (^JKSE). Setelah itu melakukan prediksi dengan model yang memiliki matriks evaluasi terbaik.
 
 *Untuk instalasi API, Framework, ataupun Library dapat dilakukan melalui file requirements.txt
 
