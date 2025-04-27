@@ -31,7 +31,7 @@ Daftar Pustaka: <br>
 - Mengukur performa setiap model menggunakan metrik kuantitatif yang objektif seperti Mean Squared Error (MSE), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), Mean absolute percentage error (MAPE), dan R-Squared ($R^2$).
 - Mengimplementasikan dengan melatih tiga model deep learning secara terpisah: LSTM, CNN, dan GRU menggunakan dataset historis harga penutupan IHSG (^JKSE). Setelah itu melakukan prediksi dengan model yang memiliki matriks evaluasi terbaik.
 
-*Untuk instalasi API, Framework, ataupun Library dapat dilakukan melalui file requirements.txt
+**Untuk instalasi API, Framework, ataupun Library dapat dilakukan melalui file requirements.txt*
 
 ## **Data Understanding**
 Data yang saya gunakan merupakan dataset berjenis **TIME SERIES** dari data historis harian dari Indeks Harga Saham Gabungan (disingkat IHSG; dalam bahasa Inggris: Indonesia Composite Index, ICI, atau IDX Composite) dan memiliki kode [ticker](https://academy.binance.com/en/glossary/ticker-symbol) ^JKSE, berikut adalah detail dari dataset yang saya gunakan:
@@ -168,11 +168,13 @@ Gambar berikut adalah bentuk pola time series dari dataset IHSG sejak 1990 hingg
 
 ### **Correlation Matrix dan Scatter Plots**
 - Correlation Matrix<br>
-  Pada Correlation Matrix berikut terlihat sangat amat jelas bahwa feature close, low, high, dan open memiliki perbedaan yang hampir **TIDAK ADA** sedangkan volume yang berbeda sendiri dengan angka yang jauh berbeda. Hal ini membuktikan bahwa korelasi antara feature volume dengan feature lainnya berbeda sehingga dapat di buang (**DROP**) di proses-proses selanjutnya.
+  Pada Correlation Matrix berikut terlihat sangat amat jelas bahwa hasilnya memperlihatkan seberapa kuat hubungan antara pasangan variabel, harga `Open`, `High`, `Low`,dan `Close` berkorelasi sangat positif (nilai 1 sempurna), sementara `Volume` perdagangan menunjukkan korelasi lemah dengan harga (nilai mendekati 0 yaitu 0.27). Hal ini membuktikan bahwa korelasi antara feature volume dengan feature lainnya berbeda sehingga dapat di buang (**DROP**) di proses-proses selanjutnya.
 
   ![image](https://github.com/user-attachments/assets/d9a81f6e-a3c3-4035-98aa-b0e95d69e914)
 
 - Scatter Plots<br>
+  Dapat dilihat pada scater plot berikut bahwa hanya volume yang datanya memiliki ketimpangan korelasi dengan feature lainnya (data tidak linear), sedangkan keempat feature lainnya memiliki korelasi yang hampir sama (menunjukkan garis linear).
+
   ![image](https://github.com/user-attachments/assets/26ac6517-67de-4d12-a389-98f23b6a5fde)
 
 Berdasarkan kedua plot tersebut, dapat ditarik kesimpulan bahwa **Karena Volume tidak memiliki korelasi yang kuat dengan data lainnya maka tidak dipilih**, kemudian **Close yang akan dipilih karena dari keempat parameter lainnya hasilnya hampir sama**.
@@ -347,11 +349,117 @@ $$ \large R^2 = 1- \dfrac{SS_{RES}}{SS_{TOT}} = 1 - \dfrac{\sum_i(y_i - \hat y_i
 Setelah mengetahui penjelasan dari masing-masing Matriks Evaluasi, selanjutnya adalah hasil evaluasi dari masing-masing model:<br>
 
 ### **Evaluasi Model LSTM**
+Berdasarkan pola kedua kurva pada Plotting Loss dan Validasi Loss model LSTM tersebut dan menunjukkan bahwa titik optimal dimana validasi loss mulai menurun dengan training loss terus menurun. Berikut gambarnya:<br>
+
+![image](https://github.com/user-attachments/assets/f935427f-1367-4d26-8c18-292b1ab0660c)
+
+Hasil evaluasi pada matriks dibawah menunjukkan model LSTM memiliki kinerja yang sangat baik. Pada data latih, nilai R² sebesar 0.98 mengindikasikan model mampu menjelaskan 98% variasi data, dengan error relatif rendah (MAPE 0.62% dan RMSE 53.20). Di data uji, meskipun metrik error sedikit meningkat (RMSE 94.41 dan MAPE 1.04%), R² tetap tinggi (0.96), menandakan model dapat menggeneralisasi dengan baik. Selisih antara metrik latih dan uji (misalnya MSE latih 2830.57 vs uji 8912.81) menunjukkan sedikit overfitting, tetapi masih dalam batas wajar untuk prediksi deret waktu. MAPE di bawah 2% mengkonfirmasi akurasi model dalam memprediksi harga, dengan deviasi rata-rata hanya sekitar 1% dari nilai aktual, sehingga layak digunakan untuk aplikasi nyata.
+```
+Training Data Metrics LSTM:
+MSE: 2830.57
+RMSE: 53.20
+MAE: 41.89
+MAPE: 0.62%
+R-squared: 0.98
+
+Testing Data Metrics LSTM:
+MSE: 8912.81
+RMSE: 94.41
+MAE: 73.19
+MAPE: 1.04%
+R-squared: 0.96
+```
 
 ### **Evaluasi Model CNN 1D**
+Berdasarkan pola kedua kurva tersebut dan menunjukkan bahwa titik optimal dimana validasi loss mulai menurun dengan training loss terus menurun. Berikut gambarnya:<br>
+
+![image](https://github.com/user-attachments/assets/2cfe177e-15a5-4776-89fe-a22c7f5dbb34)
+
+Hasil evaluasi pada matriks dibawah menunjukkan performa model yang sangat baik pada data training dengan MSE 2667.33, RMSE 51.65, MAE 39.15, MAPE 0.58%, dan R-squared 0.9821, yang berarti model menjelaskan 98.21% variasi data. Pada data testing, metrik sedikit menurun (MSE 10222.71, RMSE 101.11, MAE 76.42, MAPE 1.09%, R-squared 0.9490), tetapi masih menunjukkan generalisasi yang baik tanpa overfitting parah, dengan MAPE di bawah 2% mengindikasikan akurasi prediksi yang tinggi.
+```
+Training Data Metrics CNN:
+MSE: 2667.3326
+RMSE: 51.6462
+MAE: 39.1467
+MAPE: 0.58%
+R-squared: 0.9821
+
+Testing Data Metrics CNN:
+MSE: 10222.7068
+RMSE: 101.1074
+MAE: 76.4199
+MAPE: 1.09%
+R-squared: 0.9490
+```
 
 ### **Evaluasi Model GRU**
+Berdasarkan pola kedua kurva tersebut dan menunjukkan bahwa titik optimal dimana validasi loss mulai menurun dengan training loss terus menurun. Berikut gambarnya:<br>
 
-### **Kesimpulan**
+![image](https://github.com/user-attachments/assets/b128b7b2-95da-431b-9732-4dc06479ed8d)
+
+Hasil evaluasi pada matriks dibawah menunjukkan performa model yang sangat baik, Pada data training model GRU menunjukkan performa dengan MSE 2532.11, RMSE 50.32, MAE 38.99, MAPE 0.58%, dan R-squared 0.98, yang mengindikasikan model mampu menjelaskan 98% variasi data training dengan error yang sangat rendah. Sementara pada data testing, metriknya sedikit menurun (MSE 9640.97, RMSE 98.19, MAE 76.66, MAPE 1.09%, R-squared 0.95), tetapi tetap menunjukkan generalisasi yang baik dengan MAPE di bawah 1.1% dan R-squared yang tinggi (95%), menandakan model tidak mengalami overfitting parah dan prediksinya cukup akurat untuk data baru. Perbandingan antara metrik training dan testing juga menunjukkan konsistensi model GRU dalam memprediksi data unseen.
+```
+Training Data Metrics GRU:
+MSE: 2532.11
+RMSE: 50.32
+MAE: 38.99
+MAPE: 0.58%
+R-squared: 0.98
+
+Testing Data Metrics GRU:
+MSE: 9640.97
+RMSE: 98.19
+MAE: 76.66
+MAPE: 1.09%
+R-squared: 0.95
+```
+
+### **Kesimpulan untuk Matriks Evaluasi**
+Berdasarkan analisis prediksi harga IHSG menggunakan tiga model deep learning (LSTM, CNN, dan GRU), dapat disimpulkan bahwa model LSTM menunjukkan performa terbaik dalam memprediksi harga penutupan IHSG yang memiliki volatilitas tinggi.
+
+Hasil evaluasi kuantitatif menunjukkan LSTM mencapai MSE testing terendah (8912.81), R² testing tertinggi (0.9555), dan MAPE testing 1.04%, mengungguli GRU (MSE 9640.97, R² 0.9519) dan CNN (MSE 10222.71, R² 0.9490). Nilai MAPE semua model dibawah 1.1% membuktikan akurasi prediksi yang tinggi, dengan LSTM memiliki kemampuan terbaik dalam menangkap pola temporal data IHSG. Solusi ini secara efektif menjawab problem statement mengenai kesulitan prediksi di pasar volatil, dimana LSTM sebagai model terpilih dapat menjadi dasar sistem pendukung keputusan investasi yang mengurangi risiko kerugian. Berikut adalah tabel untuk hasil matriks evaluasi setiap model:
+
+|   | Model |   MSE_Train | RMSE_Train | MAE_Train | MAPE_Train | R2_Train |     MSE_Test |  RMSE_Test |  MAE_Test | MAPE_Test |  R2_Test |
+|--:|------:|------------:|-----------:|----------:|-----------:|---------:|-------------:|-----------:|----------:|----------:|---------:|
+| 0 |  LSTM | 2830.568865 |  53.203091 | 41.887284 |   0.617084 | 0.980952 |  8912.807054 |  94.407664 | 73.190241 |  1.042641 | 0.955528 |
+| 2 |   GRU | 2532.112498 |  50.320100 | 38.989871 |   0.575966 | 0.982960 |  9640.965567 |  98.188419 | 76.659100 |  1.085344 | 0.951895 |
+| 1 |   CNN | 2667.332567 |  51.646225 | 39.146746 |   0.579453 | 0.982050 | 10222.706768 | 101.107402 | 76.419919 |  1.093515 | 0.948992 |
 
 ### **Percobaan Implementasi**
+Berikut adalah grafik untuk Komparasi dari Harga Penutupan asli dengan Harga Penutupan Hasil Prediksi menggunakan model LSTM, grafik interaktif berikut memungkinkan analisis performa model melalui zoom dan hover untuk mengevaluasi seberapa baik prediksi mengikuti pola data aktual serta perbedaan performa antara data training dan testing.
+
+![beforeafter](https://github.com/user-attachments/assets/6c30016f-adcd-4256-bb99-c54321a22730)
+<br>
+
+Kemudian juga dilakukan percobaan untuk melakukan prediksi menggunakan model LSTM, Visualisasi ini membantu pengguna memahami tren prediksi jangka pendek berdasarkan pola historis yang telah dipelajari oleh model LSTM. Berikut gambar contohnya:
+
+![image](https://github.com/user-attachments/assets/f4aaf492-a52f-4a91-a3f5-9f9e4bf8fbaa)
+
+
+### **Kesimpulan Keseluruhan**
+**Kesimpulan Berdasarkan Business Understanding dan Hasil Evaluasi Model:**  
+
+1. **Pencapaian Tujuan Utama**  
+   Proyek ini berhasil menghasilkan model prediksi harga IHSG dengan error yang rendah melalui komparasi tiga model deep learning. LSTM menempati posisi terbaik dengan **MAPE testing 1.04%** (error prediksi <2%) dan **R² testing 0.96**, diikuti GRU (MAPE 1.09%, R² 0.95) dan CNN (MAPE 1.09%, R² 0.95). Nilai MSE testing terendah pada LSTM (8912.81) menunjukkan kemampuan terbaik dalam mengurangi deviasi prediksi, menjawab kebutuhan akan sistem prediksi akurat di pasar volatil seperti IHSG.  
+
+2. **Penyelesaian Problem Statement**  
+   - **Volatilitas Tinggi**: Model LSTM terbukti efektif menangkap pola temporal data IHSG dengan R² tinggi (0.96), mengindikasikan 96% variasi harga testing dapat dijelaskan oleh model. Ini membantu investor mengurangi ketidakpastian dalam pengambilan keputusan.  
+   - **Minimnya Riset Komparatif**: Studi ini mengisi gap penelitian dengan membuktikan LSTM lebih unggul daripada CNN dan GRU untuk prediksi IHSG, sekaligus memberikan referensi terukur bagi industri keuangan.  
+
+3. **Insight Kuantitatif dan Rekomendasi**  
+   - **LSTM** cocok untuk prediksi jangka pendek karena arsitekturnya yang dirancang untuk data sekuensial, terlihat dari MAPE terendah (1.04%) yang merefleksikan akurasi relatif stabil meski harga fluktuatif.  
+   - **GRU** menempati posisi kedua dengan performa mendekati LSTM, cocok sebagai alternatif jika kebutuhan komputasi lebih efisien.  
+   - **CNN** kurang optimal dalam menangkap pola temporal IHSG, terlihat dari MSE testing tertinggi (10222.71), sehingga tidak direkomendasikan untuk kasus serupa.  
+
+4. **Implikasi Praktis**  
+   - Investor dan analis dapat memanfaatkan model LSTM untuk memprediksi tren harian/semingguan IHSG dengan confidence level tinggi (R² >0.95), membantu menyusun strategi *entry/exit point* yang lebih terukur.  
+   - Institusi keuangan dapat mengadopsi framework ini sebagai dasar pengembangan sistem prediksi otomatis yang terintegrasi dengan analisis fundamental, mengurangi risiko kerugian akibat volatilitas tak terduga.
+   - Prediksi 7 hari ke depan (`plt.plot`) dengan menggunakan model LSTM juga menunjukkan konsistensi model dalam memperluas pola historis ke masa depan, meskipun akurasi mungkin menurun seiring penambahan horizon waktu (efek *forecasting error accumulation*).   
+
+5. **Keterbatasan dan Saran Pengembangan**  
+   - Meski LSTM terbaik, selisih performa antar model tidak signifikan (ΔR² testing <0.01 antara LSTM dan GRU). Hybrid model (LSTM-GRU) dapat dieksplorasi untuk memanfaatkan keunggulan kedua arsitektur.  
+
+**Ringkasan Final**  
+Proyek ini membuktikan bahwa penerapan deep learning, khususnya LSTM, mampu menjawab tantangan prediksi harga IHSG di tengah volatilitas tinggi. Dengan error prediksi di bawah 1.1% (MAPE) dan kemampuan menjelaskan >95% variasi data (R²), model ini menjadi solusi yang feasible untuk mendukung keputusan investasi berbasis data. 
+
+Hasil komparasi ketiga model juga memberikan panduan empiris bagi industri dalam memilih arsitektur AI yang optimal, sekaligus membuka peluang pengembangan sistem prediksi yang lebih kompleks dan terintegrasi di masa depan. Implementasi TFLite membuka peluang adopsi teknologi AI di perangkat retail investor, menjadikan prediksi pasar lebih terbuka dan data-driven.
