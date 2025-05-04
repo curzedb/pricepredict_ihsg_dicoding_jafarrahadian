@@ -67,7 +67,7 @@ Berdasarkan pada tabel diatas dapat diketahui bahwa ada beberapa feature dari da
 - volume: Jumlah saham yang diperdagangkan pada hari itu
 
 ### **Jumlah Baris & Kolom**
-Untuk dapat mengetahui jumlah baris dan kolom, anda dapat menggunakan perintah `maindf.shape` yang dimana pada studi kasus di hari data ini diambil maka akan menghasilkan output berupa `(8539, 6)`. Berdasarkan pada tuple `(8539, 6)`, secara keseluruhan data berjumlah 8539 dengan 6 feature, untuk penjelasan setiap feature dapat anda baca pada bagian **Feature pada Dataset ^JKSE**.
+Untuk dapat mengetahui jumlah baris dan kolom, anda dapat menggunakan perintah `maindf.shape` yang dimana pada studi kasus di hari data ini diambil maka akan menghasilkan output berupa `(8539, 6)`. Berdasarkan pada tuple `(8539, 6)`, secara keseluruhan data berjumlah 8539 dengan 6 feature, untuk penjelasan setiap feature terdapat pada bagian **Feature pada Dataset ^JKSE**.
 
 ### **Informasi Tipe Data**
 Untuk dapat mengetahui informasi tipedata, anda dapat menggunakan `maindf.info()` dan akan menghasilkan output yaitu:
@@ -146,7 +146,7 @@ Berikut adalah beberapa kondisi data yang dapat dilihat baik dalam bentuk tabel 
 
   ![image](https://github.com/user-attachments/assets/9933cf06-f31e-42d1-b7da-ac4388029bfb)
 
-  Dapat dilihat pada boxplot diatas bahwa hanya pada **FEATURE VOLUME** terjadinya peristiwa outliers sedangkan pada feature lain aman tanpa terjadinya outliers. Outlier sendiri adalah observasi yang terletak pada jarak abnormal dari nilai lain dalam sampel acak dari suatu populasi dalam data. Boxplot diatas hanya berfungsi untuk menampilkan apakah ada **OUTLIERS** pada data **TANPA PENGAMBILAN KEPUTUSAN APAPUN**, untuk data cleansing akan dilakukan pada tahapan **DATA PREPARATION**.
+  Dapat dilihat pada boxplot diatas bahwa hanya pada **FEATURE VOLUME** terjadinya peristiwa outliers sedangkan pada feature lain aman tanpa terjadinya outliers. Outlier sendiri adalah observasi yang terletak pada jarak abnormal dari nilai lain dalam sampel acak dari suatu populasi dalam data. Boxplot diatas hanya berfungsi untuk menampilkan apakah ada **OUTLIERS** pada data, untuk data cleansing akan dilakukan pada tahapan **DATA PREPARATION**.
   
 ### **Distribusi Feature Harga menggunakan Histogram**
 Terlihat pada gambar berikut bahwa distribusi data pada keseluruhan(5) feature terdapat perbedaan. Untuk open, high, low, close memiliki rentang nilai yang sama sedangkan volume memiliki nilai distribusi yang berbeda sendiri (Menandakan tingginya outliers dan sudah terbukti saat menggunakan boxplot pada tahapan sebelumnya).
@@ -183,17 +183,17 @@ Berdasarkan kedua plot tersebut, dapat ditarik kesimpulan bahwa **Karena Volume 
 Berikut adalah beberapa tahapan yang dilakukan untuk merapihkan data agar data siap untuk diproses pada tahap modeling:
 ### **Penganganan Missing Value, Outlier, dan Duplikat**
 - Missing Value<br>
-  Dengan menggunakan metode [interpolasi](https://medium.com/@aseafaldean/time-series-data-interpolation-e4296664b86), tidak ditemukan adanya missing value pada dataset. Maka dari itu dapat langsung ke tahap data cleansing selanjutnya, **BUKTINYA DAPAT ANDA LIHAT PADA TAHAPAN "Kondisi Data (Missing Value, Duplikat, dan Outlier)"**
+  Dengan menggunakan metode [interpolasi](https://medium.com/@aseafaldean/time-series-data-interpolation-e4296664b86), tidak ditemukan adanya missing value pada dataset. Maka dari itu dapat langsung ke tahap data cleansing selanjutnya, **BUKTINYA TERDAPAT DAPAT PADA TAHAPAN "Kondisi Data (Missing Value, Duplikat, dan Outlier)"**
   
 - Outlier<br>
-  Dengan menggunakan metode [Interquartil Range (IQR)](https://www.stat.cmu.edu/~hseltman/309/Book/Book.pdf), outlier pada feature volume dapat diselesaikan (**ANDA DAPAT MELIHAT BUKTI FEATURE VOLUME TERDAPAT OUTLIER PADA TAHAP "Kondisi Data (Missing Value, Duplikat, dan Outlier)"**). Berikut setelah penanganannya:<br>
+  Dengan menggunakan metode [Interquartil Range (IQR)](https://www.stat.cmu.edu/~hseltman/309/Book/Book.pdf), outlier pada feature volume dapat diselesaikan (**BUKTI FEATURE VOLUME TERDAPAT OUTLIER PADA TAHAP "Kondisi Data (Missing Value, Duplikat, dan Outlier)"**). Berikut setelah penanganannya:<br>
   ![image](https://github.com/user-attachments/assets/28742ecd-0135-4d6b-908a-1c00639d8ff2)
 
 - Duplikat<br>
   Berdasarkan pengecekan pada tahapan **Kondisi Data (Missing Value, Duplikat, dan Outlier)**, tidak ditemukannya ada data duplikat maka dari itu data yang sudah bersih (`maindf_cleaned`) dapat diproses pada tahapan selanjutnya.
   
 ### **Encoding Feature**
-Berdasarkan proses **Correlation Matrix dan Scatter Plots**, feature yang akan dipilih dan dijadikan untuk testing serta training adalah feature close. **ANDA BISA MEMBACA LAGI PADA TAHAPAN **Correlation Matrix dan Scatter Plots** KENAPA FEATURE CLOSE YANG DIPILIH**, kemudian 1000 data terbaru akan dipilih untuk data test dan data train. Kenapa hanya 1000 data terbaru yang dipilih untuk training dan testing?? Saya hanya memilih 1000 data terbaru agar kinerja model tetap optimal dan tidak terbebani. Hal itu disebabkan karena beberapa model yang saya gunakan tidak mampu membaca data time series yang sangat panjang. Berikut adalah data hasil Encoding Feature **TANPA BERMAKSUD** untuk melakukan visualisasi data, menampilkan data, dan eksplorasi pemahamaan data lainya seperti pada catatan review:
+Berdasarkan proses **Correlation Matrix dan Scatter Plots**, feature yang akan dipilih dan dijadikan untuk testing serta training adalah feature close, kemudian 1000 data terbaru akan dipilih untuk data test dan data train. Kenapa hanya 1000 data terbaru yang dipilih untuk training dan testing? Saya hanya memilih 1000 data terbaru agar kinerja model tetap optimal dan tidak terbebani. Hal itu disebabkan karena beberapa model yang saya gunakan tidak mampu membaca data time series yang sangat panjang. Berikut adalah data hasil Encoding Feature:
 
 |      |       date |       Close |
 |-----:|-----------:|------------:|
@@ -210,21 +210,22 @@ Berdasarkan proses **Correlation Matrix dan Scatter Plots**, feature yang akan d
 | 8521 | 2025-04-25 | 6678.915039 |
 
 ### **Split Dataset**
-Data kemudian akan dipisahkan menjadi data training dan data testing, dengan proporsi 80% untuk data pelatihan dan 20% untuk data pengujian, penggunaan konsep data pelatihan dan data pengujian menggunakan materi yang ada pada buku yang dikarang oleh [(Triayudi)](https://anyflip.com/tdezn/iggg/basic/151-200) pada halaman 153-155. Berikut adalah hasilnya **TANPA BERMAKSUD** untuk melakukan visualisasi data, menampilkan data, dan eksplorasi pemahamaan data lainya seperti pada catatan review:<br>
+Data kemudian akan dipisahkan menjadi data training dan data testing, dengan proporsi 80% untuk data pelatihan dan 20% untuk data pengujian, penggunaan konsep data pelatihan dan data pengujian menggunakan materi yang ada pada buku yang dikarang oleh [(Triayudi)](https://anyflip.com/tdezn/iggg/basic/151-200) pada halaman 153-155. Berikut adalah hasilnya :<br>
 ```
 Training data shape: (800, 1)
 Testing data shape: (200, 1)
 ```
 
 ### **Standarisasi/Normalisasi Data**
-Setelah data dibagi kedalam data training dan data testing, selanjutnya akan dilakukan proses standarisasi menggunakan Min-Max Scaler. Standarisasi dilakukan untuk meminimalisir error, dengan diubahnya data menjadi nilai interval 0 dan 1 menggunakan rumus matematika. Berikut adalah hasilnya **TANPA BERMAKSUD** untuk melakukan visualisasi data, menampilkan data, dan eksplorasi pemahamaan data lainya seperti pada catatan review:
+Setelah data dibagi kedalam data training dan data testing, selanjutnya akan dilakukan proses standarisasi menggunakan Min-Max Scaler. Standarisasi dilakukan untuk meminimalisir error, dengan diubahnya data menjadi nilai interval 0 dan 1 menggunakan rumus matematika. Berikut adalah hasilnya :
+
 ```
 Scaled Training data shape: (800, 1)
 Scaled Testing data shape: (200, 1)
 ```
 
 ### **Ubah Matriks Data**
-Mengubah data kedalam matriks 3 dimensi (`[samples, time steps, features]`) pada setiap model, mengambil dataset (dengan kolom 'Close') dan parameter time_step (jumlah lag), lalu melalui looping, ia membuat input sequence (dataX) yang berisi sekuens nilai sepanjang time_step dan output/target (dataY) yang berisi nilai berikutnya setelah sequence tersebut. Hasilnya adalah dua array numpy: dataX (berisi kumpulan sequences untuk training) dan dataY (berisi nilai target yang sesuai), di mana struktur ini memungkinkan model untuk mempelajari pola temporal. Berikut adalah hasilnya **TANPA BERMAKSUD** untuk melakukan visualisasi data, menampilkan data, dan eksplorasi pemahamaan data lainya seperti pada catatan review:
+Mengubah data kedalam matriks 3 dimensi (`[samples, time steps, features]`) pada setiap model, mengambil dataset (dengan kolom 'Close') dan parameter time_step (jumlah lag), lalu melalui looping, ia membuat input sequence (dataX) yang berisi sekuens nilai sepanjang time_step dan output/target (dataY) yang berisi nilai berikutnya setelah sequence tersebut. Hasilnya adalah dua array numpy: dataX (berisi kumpulan sequences untuk training) dan dataY (berisi nilai target yang sesuai), di mana struktur ini memungkinkan model untuk mempelajari pola temporal. Berikut adalah hasilnya:
 
 ![image](https://github.com/user-attachments/assets/dc9f562c-ab99-4a75-a744-bac9f94e211d)
 
@@ -255,7 +256,7 @@ Berikut adalah kekurangan dan kelebihan model LSTM:
   -- Forget gate membantu menghindari noise dalam data saham yang fluktuatif.<br>
   -- Dirancang khusus untuk data deret waktu, sehingga cocok untuk prediksi harga saham.<br>
 
-Kesimpulannya adalah algoritma LSTM mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil evaluasi model akan dilakukan pada tahap Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**. Langkah terakhir untuk tahapan modeling pada model LSTM adalah melakukan denormalisasi dengan inverse Min-Max Scaler agar data kembali ke bentuk asalnya.
+Kesimpulannya adalah algoritma LSTM mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil evaluasi model akan dilakukan pada tahap Evaluation. Langkah terakhir untuk tahapan modeling pada model LSTM adalah melakukan denormalisasi dengan inverse Min-Max Scaler agar data kembali ke bentuk asalnya.
 
 ### **CNN 1D (Convolutional Neural Network 1 Dimensi)**
 Model CNN 1D mengaplikasikan filter konvolusi pada data `close` untuk mendeteksi pola lokal (misalnya, kenaikan/penurunan 5 hari berturut-turut) melalui operasi sliding window, lalu hasil ekstraksi fiturnya digunakan untuk prediksi. Model CNN 1D lebih cepat tetapi terbatas pada pola jangka pendek.<br>
@@ -282,7 +283,7 @@ Berikut adalah kekurangan dan kelebihan dari Model CNN 1D:
   -- Komputasinya cepat karena paralelisasi lebih baik dibanding RNN (LSTM & GRU : Turunan RNN).<br>
   -- Arsitektur fleksibel sehingga dapat dikombinasikan dengan pooling layers untuk ekstraksi fitur hierarkis.<br>
 
-Kesimpulannya adalah  algoritma CNN mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil evaluasi model akan dilakukan pada tahap Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**. Langkah terakhir untuk tahapan modeling pada model CNN 1D adalah melakukan denormalisasi dengan inverse Min-Max Scaler agar data kembali ke bentuk asalnya.
+Kesimpulannya adalah  algoritma CNN mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil evaluasi model akan dilakukan pada tahap Evaluation. Langkah terakhir untuk tahapan modeling pada model CNN 1D adalah melakukan denormalisasi dengan inverse Min-Max Scaler agar data kembali ke bentuk asalnya.
 
 ### **GRU (Gated Recurrent Unit)**
 Model GRU (Gated Recurrent Unit) adalah varian yang lebih sederhana dari LSTM dengan hanya dua gerbang (update dan reset), yang menggabungkan fungsi input dan forget gate menjadi satu, tetap mampu menangkap pola temporal tetapi dengan komputasi lebih efisien, cocok untuk mengenali pola pergerakan harga harian tanpa redundansi.<br>
@@ -308,7 +309,7 @@ Berikut adalah kekurangan dan kelebihan dari Model GRU:
   -- Kinerja pada Data Kecil: Lebih robust terhadap overfitting pada dataset terbatas.<br>
   -- Menangnai Pola Jangka Pendek: Efektif untuk prediksi harian/mingguan dengan fluktuasi cepat.<br>
 
-Kesimpulannya adalah algoritma GRU mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil matriks evaluasi model akan dilakukan pada tahap Evaluation. **PENENTUAN MODEL TIDAK DAPAT DILAKUKAN JIKA BELUM MENGETAHUI HASIL DARI EVALUASI MODEL**. Langkah terakhir untuk tahapan modeling pada model GRU adalah melakukan denormalisasi dengan inverse Min-Max Scaler agar data kembali ke bentuk asalnya.
+Kesimpulannya adalah algoritma GRU mampu melakukan train dengan hyperparameter yang sudah ditentukan seperti diatas, untuk hasil matriks evaluasi model akan dilakukan pada tahap Evaluation. Langkah terakhir untuk tahapan modeling pada model GRU adalah melakukan denormalisasi dengan inverse Min-Max Scaler agar data kembali ke bentuk asalnya.
 
 ## **Evaluasi**
 Matriks Evaluasi yang digunakan pada proyek ini diantaranya ada MSE, RMSE, MAE, MAPE, & R2. Berikut adalah penjelasan dari setiap matriks evaluasi yang digunakan:<br>
